@@ -2,7 +2,6 @@
 
 # TODO: Test with our motors 
 # TODO: Figure out needed baudrate
-# TODO: How to convert angle to dynamixel position value
 
 import os, sys, ctypes, time
 os.sys.path.append('../dynamixel_functions_py')             # Path setting
@@ -57,67 +56,30 @@ class MotorControl:
         # Open port
         if dynamixel.openPort(self.port_num):
             print("Succeeded to open the port!")
-
+        else:
+            print("Failed to open port")
+            return False
         # Set port baudrate
         if dynamixel.setBaudRate(self.port_num, BAUDRATE):
             print("Succeeded to change the baudrate!")
+        else:
+            print("Failed to set baudrate")
+            return False
         
-        self.enable_torque()
-    
-    def enable_torque(self):
-        # Enable Dynamixel#1 Torque
-        dynamixel.write1ByteTxRx(self.port_num, PROTOCOL_VERSION, DXL1_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE)
-        if dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION) != COMM_SUCCESS:
-            dynamixel.printTxRxResult(PROTOCOL_VERSION, dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION))
-        elif dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION))
-        else:
-            print("Dynamixel#1 has been successfully connected")
+        self.enable_torque(DXL1_ID)
+        self.enable_torque(DXL2_ID)
+        self.enable_torque(DXL3_ID)
 
-        # Enable Dynamixel#2 Torque
-        dynamixel.write1ByteTxRx(self.port_num, PROTOCOL_VERSION, DXL2_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE)
-        if dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION) != COMM_SUCCESS:
-            dynamixel.printTxRxResult(PROTOCOL_VERSION, dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION))
-        elif dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION))
-        else:
-            print("Dynamixel#2 has been successfully connected")
-            
-        # Enable Dynamixel#3 Torque
-        dynamixel.write1ByteTxRx(self.port_num, PROTOCOL_VERSION, DXL3_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE)
-        if dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION) != COMM_SUCCESS:
-            dynamixel.printTxRxResult(PROTOCOL_VERSION, dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION))
-        elif dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION))
-        else:
-            print("Dynamixel#3 has been successfully connected")
+        return True
 
-        # Add parameter storage for Dynamixel#1 present position value
-        self.dxl_addparam_result = ctypes.c_ubyte(dynamixel.groupSyncReadAddParam(self.groupread_num, DXL1_ID)).value
-        if self.dxl_addparam_result != 1:
-            print("[ID:%03d] groupSyncRead addparam failed" % (DXL1_ID))
-            quit()
-
-        # Add parameter storage for Dynamixel#2 present position value
-        self.dxl_addparam_result = ctypes.c_ubyte(dynamixel.groupSyncReadAddParam(self.groupread_num, DXL2_ID)).value
-        if self.dxl_addparam_result != 1:
-            print("[ID:%03d] groupSyncRead addparam failed" % (DXL2_ID))
-            quit()
-
-        # Add parameter storage for Dynamixel#3 present position value
-        self.dxl_addparam_result = ctypes.c_ubyte(dynamixel.groupSyncReadAddParam(self.groupread_num, DXL3_ID)).value
-        if self.dxl_addparam_result != 1:
-            print("[ID:%03d] groupSyncRead addparam failed" % (DXL3_ID))
-            quit()
-
-    def move_motor(self, motorAngle1, motorAngle2, motorAngle3):
+    def move_motor(self, motorPos1, motorPos2, motorPos3):
         # Present positions
         dxl1_present_position = 0                                   
         dxl2_present_position = 0
         dxl3_present_position = 0
 
-        # [motor1Angle, motor2Angle, motor3Angle]
-        dxl_goal_position = [motorAngle1, motorAngle2, motorAngle3]
+        # [motorPos1, motorPos2, motorPos3]
+        dxl_goal_position = [motorPos1, motorPos2, motorPos3]
 
         timeout = 5  # Timeout in seconds
         start_time = time.time()
@@ -169,6 +131,12 @@ class MotorControl:
                     print("[ID:%03d] groupSyncRead getdata failed" % (DXL2_ID))
                     quit()
 
+                # Check if groupsyncread data of Dynamixel#3 is available
+                dxl_getdata_result = ctypes.c_ubyte(dynamixel.groupSyncReadIsAvailable(self.groupread_num, DXL3_ID, ADDR_PRO_PRESENT_POSITION, LEN_PRO_PRESENT_POSITION)).value
+                if dxl_getdata_result != 1:
+                    print("[ID:%03d] groupSyncRead getdata failed" % (DXL3_ID))
+                    quit()
+
                 # Get Dynamixel#1 present position value
                 dxl1_present_position = dynamixel.groupSyncReadGetData(self.groupread_num, DXL1_ID, ADDR_PRO_PRESENT_POSITION, LEN_PRO_PRESENT_POSITION)
 
@@ -194,29 +162,38 @@ class MotorControl:
                     (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
 
     def shutdown(self):
-        # Disable Dynamixel#1 Torque
-        dynamixel.write1ByteTxRx(self.port_num, PROTOCOL_VERSION, DXL1_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE)
-        if dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION) != COMM_SUCCESS:
-            dynamixel.printTxRxResult(PROTOCOL_VERSION, dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION))
-        elif dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION))
-
-        # Disable Dynamixel#2 Torque
-        dynamixel.write1ByteTxRx(self.port_num, PROTOCOL_VERSION, DXL2_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE)
-        if dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION) != COMM_SUCCESS:
-            dynamixel.printTxRxResult(PROTOCOL_VERSION, dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION))
-        elif dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION))
-
-        # Disable Dynamixel#3 Torque
-        dynamixel.write1ByteTxRx(self.port_num, PROTOCOL_VERSION, DXL3_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE)
-        if dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION) != COMM_SUCCESS:
-            dynamixel.printTxRxResult(PROTOCOL_VERSION, dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION))
-        elif dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION))
+        self.disable_torque(DXL1_ID)
+        self.disable_torque(DXL2_ID)
+        self.disable_torque(DXL3_ID)
 
         # Close port
         dynamixel.closePort(self.port_num)
+
+    def enable_torque(self, motor_id):
+        # Enable Dynamixel Torque
+        dynamixel.write1ByteTxRx(self.port_num, PROTOCOL_VERSION, motor_id, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE)
+        if dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION) != COMM_SUCCESS:
+            dynamixel.printTxRxResult(PROTOCOL_VERSION, dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION))
+            return False
+        elif dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION) != 0:
+            dynamixel.printRxPacketError(PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION))
+            return False
+        else:
+            print("Dynamixel#%d has been successfully connected" % motor_id)
+
+        # Add parameter storage for Dynamixel present position value
+        self.dxl_addparam_result = ctypes.c_ubyte(dynamixel.groupSyncReadAddParam(self.groupread_num, motor_id)).value
+        if self.dxl_addparam_result != 1:
+            print("[ID:%03d] groupSyncRead addparam failed" % motor_id)
+            quit()
+    
+    def disable_torque(self, motor_id):
+        # Disable Dynamixel Torque
+        dynamixel.write1ByteTxRx(self.port_num, PROTOCOL_VERSION, motor_id, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE)
+        if dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION) != COMM_SUCCESS:
+            dynamixel.printTxRxResult(PROTOCOL_VERSION, dynamixel.getLastTxRxResult(self.port_num, PROTOCOL_VERSION))
+        elif dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION) != 0:
+            dynamixel.printRxPacketError(PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, PROTOCOL_VERSION))
 
 # Convert angle to Dynamixel position (0-4095 range)
 def angle_to_position(angle):

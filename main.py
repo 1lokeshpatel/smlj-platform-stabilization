@@ -7,15 +7,17 @@ import numpy as np
 # motor test
 try:
     ctrl = motor_control.MotorControl()
-    ctrl.setup()
-    ctrl.enable_torque()
-    ctrl.move_motor(motor_control.angle_to_position(25), motor_control.angle_to_position(25), motor_control.angle_to_position(25))
-    ctrl.shutdown()
+    if not ctrl.setup():
+        print("Motor setup failed. Exiting...")
+        quit()
+
+    ctrl.move_motor(motor_control.angle_to_position(25), 
+                    motor_control.angle_to_position(25), 
+                    motor_control.angle_to_position(25))
 
 except Exception as e:
-        print(f"An error occurred: {e}")
+    print(f"An error occurred: {e}")
 
 finally:
-    # Shutdown and cleanup resources
-    motor_control.shutdown()
+    ctrl.shutdown()
     print("Shutdown complete.")
