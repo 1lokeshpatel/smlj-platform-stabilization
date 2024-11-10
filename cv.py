@@ -22,6 +22,16 @@ class Camera:
         self.ball_lower_bound = np.array([15, 100, 100])  # H: around 15 degrees
         self.ball_upper_bound = np.array([35, 255, 255])  # H: up to 35 degrees
 
+    def capture_image(self):
+        # Capture frame from the camera
+        ret, frame = self.cap.read()
+        if not ret:
+            print("Failed to grab frame.")
+            return None
+        # Resize frame to desired resolution
+        frame_resized = cv.resize(frame, (self.frame_width, self.frame_height))
+        return frame_resized
+
     def display_video(self, image):
         cv.imshow("Live Feed", image)
         cv.waitKey(1)
