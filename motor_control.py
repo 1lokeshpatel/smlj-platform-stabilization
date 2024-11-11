@@ -22,7 +22,7 @@ PROTOCOL_VERSION            = 2
 DXL1_ID                     = 1                             # Dynamixel ID: 1
 DXL2_ID                     = 2                             # Dynamixel ID: 2
 DXL3_ID                     = 3                             # Dynamixel ID: 3
-BAUDRATE                    = 1000000
+BAUDRATE                    = 57600
 DEVICENAME                  = "COM3"                # TODO: Check which port is being used on RPI
 
 TORQUE_ENABLE               = 1                             # Value for enabling the torque
@@ -85,28 +85,23 @@ class MotorControl:
 
         while 1:
 
-            # Allocate goal position value into byte array
-            param_goal_position = [DXL_LOBYTE(DXL_LOWORD(dxl_goal_position[DXL1_ID-1])), DXL_HIBYTE(DXL_LOWORD(dxl_goal_position[DXL1_ID-1])), 
-                                    DXL_LOBYTE(DXL_HIWORD(dxl_goal_position[DXL2_ID-1])), DXL_HIBYTE(DXL_HIWORD(dxl_goal_position[DXL2_ID-1])),
-                                    DXL_LOBYTE(DXL_HIWORD(dxl_goal_position[DXL3_ID-1])), DXL_HIBYTE(DXL_HIWORD(dxl_goal_position[DXL3_ID-1]))]
+            # Add goal position values to the SyncWrite parameter storage for each motor
+            for i, dxl_id in enumerate([DXL1_ID, DXL2_ID, DXL3_ID]):
+                # Extract goal position for each motor and pack it into 4 bytes (int32)
+                goal_position = dxl_goal_position[i]
+                param_goal_position = [
+                    DXL_LOBYTE(DXL_LOWORD(goal_position)), 
+                    DXL_HIBYTE(DXL_LOWORD(goal_position)), 
+                    DXL_LOBYTE(DXL_HIWORD(goal_position)), 
+                    DXL_HIBYTE(DXL_HIWORD(goal_position))
+                ]
 
-            # Add Dynamixel#1 goal position value to the Syncwrite parameter storage
-            dxl_addparam_result = self.groupwrite_num.addParam(DXL1_ID, param_goal_position)
-            if dxl_addparam_result != True:
-                print("[ID:%03d] groupSyncWrite addparam failed" % DXL1_ID)
-                quit()
-
-            # Add Dynamixel#2 goal position value to the Syncwrite parameter storage
-            dxl_addparam_result = self.groupwrite_num.addParam(DXL2_ID, param_goal_position)
-            if dxl_addparam_result != True:
-                print("[ID:%03d] groupSyncWrite addparam failed" % DXL2_ID)
-                quit()
-            
-            # Add Dynamixel#2 goal position value to the Syncwrite parameter storage
-            dxl_addparam_result = self.groupwrite_num.addParam(DXL3_ID, param_goal_position)
-            if dxl_addparam_result != True:
-                print("[ID:%03d] groupSyncWrite addparam failed" % DXL3_ID)
-                quit()
+                # Add Dynamixel goal position value to the Syncwrite parameter storage
+                dxl_addparam_result = self.groupwrite_num.addParam(dxl_id, param_goal_position)
+                if not dxl_addparam_result:
+                    print(f"[ID:{dxl_id:03d}] groupSyncWrite addparam failed")
+                    self.groupwrite_num.clearParam()
+                    return False
 
             # Syncwrite goal position
             dxl_comm_result = self.groupwrite_num.txPacket()
@@ -120,7 +115,7 @@ class MotorControl:
                 # Syncread present position
                 dxl_comm_result = self.groupread_num.txRxPacket()
                 if dxl_comm_result != COMM_SUCCESS:
-                    print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+                    print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
 
                 # Check if groupsyncread data of Dynamixel#1 is available
                 dxl_getdata_result = self.groupread_num.isAvailable(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
@@ -134,6 +129,12 @@ class MotorControl:
                     print("[ID:%03d] groupSyncRead getdata failed" % DXL2_ID)
                     quit()
 
+                # Check if groupsyncread data of Dynamixel#3 is available
+                dxl_getdata_result = self.groupread_num.isAvailable(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+                if dxl_getdata_result != True:
+                    print("[ID:%03d] groupSyncRead getdata failed" % DXL3_ID)
+                    quit()
+
                 # Get Dynamixel#1 present position value
                 dxl1_present_position = self.groupread_num.getData(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
@@ -141,7 +142,7 @@ class MotorControl:
                 dxl2_present_position = self.groupread_num.getData(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
                 # Get Dynamixel#3 present position value
-                dxl2_present_position = self.groupread_num.getData(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+                dxl2_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
                 print("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n" % 
                     (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
