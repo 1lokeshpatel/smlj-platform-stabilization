@@ -1,12 +1,12 @@
-import cv
 import motor_control
 import time
 import threading
 import numpy as np
 
+ctrl = motor_control.MotorControl()
+
 # motor test
 try:
-    ctrl = motor_control.MotorControl()
     if not ctrl.setup():
         print("Motor setup failed. Exiting...")
         quit()
