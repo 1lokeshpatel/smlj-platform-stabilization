@@ -17,6 +17,10 @@ try:
 
     # while 1:
     #     ctrl.read_status()
+    ctrl.set_position_limits(1, motor_control.angle_to_position(290), motor_control.angle_to_position(380))
+    ctrl.set_position_limits(2, motor_control.angle_to_position(300), motor_control.angle_to_position(390))
+    ctrl.set_position_limits(3, motor_control.angle_to_position(40), motor_control.angle_to_position(130))
+
     for i in range(10):
         ctrl.move_motor(motor_control.angle_to_position(301.46), 
                         motor_control.angle_to_position(307.4), 

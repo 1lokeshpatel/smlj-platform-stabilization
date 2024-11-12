@@ -7,6 +7,8 @@ import time
 from dynamixel_sdk import *
 
 # Control table address - specifically for XM430-W210
+ADDR_MAX_POSITION_LIMIT = 48
+ADDR_MIN_POSITION_LIMIT = 52
 ADDR_TORQUE_ENABLE      = 64
 ADDR_GOAL_POSITION      = 116
 ADDR_PRESENT_POSITION   = 132
@@ -195,6 +197,43 @@ class MotorControl:
                 f"[ID:{DXL2_ID:03d}] PresPos:{(dxl2_present_position*360)/4095:04f}\t"
                 f"[ID:{DXL3_ID:03d}] PresPos:{(dxl3_present_position*360)/4095:04f}"
             )
+
+    def set_position_limits(self, motor_id, min_limit, max_limit):
+        """
+        Set the position limits for the given motor ID.
+        :param motor_id: ID of the Dynamixel motor
+        :param min_limit: Minimum position limit (0-4095 for XM430-W210)
+        :param max_limit: Maximum position limit (0-4095 for XM430-W210)
+        """
+        # Disable torque before setting limits
+        self.disable_torque(motor_id)
+
+        # Set maximum position limit
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(
+            self.portHandler, motor_id, ADDR_MAX_POSITION_LIMIT, max_limit
+        )
+        if dxl_comm_result != COMM_SUCCESS:
+            print(f"Failed to set max limit for Motor ID {motor_id}: {self.packetHandler.getTxRxResult(dxl_comm_result)}")
+            return False
+        elif dxl_error != 0:
+            print(f"Error setting max limit for Motor ID {motor_id}: {self.packetHandler.getRxPacketError(dxl_error)}")
+
+        # Set minimum position limit
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(
+            self.portHandler, motor_id, ADDR_MIN_POSITION_LIMIT, min_limit
+        )
+        if dxl_comm_result != COMM_SUCCESS:
+            print(f"Failed to set min limit for Motor ID {motor_id}: {self.packetHandler.getTxRxResult(dxl_comm_result)}")
+            return False
+        elif dxl_error != 0:
+            print(f"Error setting min limit for Motor ID {motor_id}: {self.packetHandler.getRxPacketError(dxl_error)}")
+
+        print(f"Position limits set for Motor ID {motor_id}: Min={min_limit}, Max={max_limit}")
+        # Re-enable torque
+        self.enable_torque(motor_id)
+
+        return True
+
 
     def enable_torque(self, motor_id):
         # Enable Dynamixel Torque
