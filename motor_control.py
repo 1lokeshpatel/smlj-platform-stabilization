@@ -23,7 +23,7 @@ DXL1_ID                     = 1                             # Dynamixel ID: 1
 DXL2_ID                     = 2                             # Dynamixel ID: 2
 DXL3_ID                     = 3                             # Dynamixel ID: 3
 BAUDRATE                    = 57600
-DEVICENAME                  = "COM3"                # TODO: Check which port is being used on RPI
+DEVICENAME                  = "/dev/ttyUSB0"                # TODO: Check which port is being used on RPI
 
 TORQUE_ENABLE               = 1                             # Value for enabling the torque
 TORQUE_DISABLE              = 0                             # Value for disabling the torque
