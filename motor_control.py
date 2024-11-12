@@ -67,7 +67,7 @@ class MotorControl:
         
         self.enable_torque(DXL1_ID)
         self.enable_torque(DXL2_ID)
-        self.enable_torque(DXL3_ID)
+        # self.enable_torque(DXL3_ID)
 
         return True
 
@@ -86,7 +86,7 @@ class MotorControl:
         while 1:
 
             # Add goal position values to the SyncWrite parameter storage for each motor
-            for i, dxl_id in enumerate([DXL1_ID, DXL2_ID, DXL3_ID]):
+            for i, dxl_id in enumerate([DXL1_ID, DXL2_ID]):
                 # Extract goal position for each motor and pack it into 4 bytes (int32)
                 goal_position = dxl_goal_position[i]
                 param_goal_position = [
@@ -129,11 +129,11 @@ class MotorControl:
                     print("[ID:%03d] groupSyncRead getdata failed" % DXL2_ID)
                     quit()
 
-                # Check if groupsyncread data of Dynamixel#3 is available
-                dxl_getdata_result = self.groupread_num.isAvailable(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-                if dxl_getdata_result != True:
-                    print("[ID:%03d] groupSyncRead getdata failed" % DXL3_ID)
-                    quit()
+                # # Check if groupsyncread data of Dynamixel#3 is available
+                # dxl_getdata_result = self.groupread_num.isAvailable(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+                # if dxl_getdata_result != True:
+                #     print("[ID:%03d] groupSyncRead getdata failed" % DXL3_ID)
+                #     quit()
 
                 # Get Dynamixel#1 present position value
                 dxl1_present_position = self.groupread_num.getData(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
@@ -141,28 +141,27 @@ class MotorControl:
                 # Get Dynamixel#2 present position value
                 dxl2_present_position = self.groupread_num.getData(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
-                # Get Dynamixel#3 present position value
-                dxl2_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+                # # Get Dynamixel#3 present position value
+                # dxl2_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
-                print("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n" % 
-                    (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
+                # print("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n" % 
+                #     (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
 
-                if not ((abs(dxl_goal_position[DXL1_ID-1] - dxl1_present_position) > DXL_MOVING_STATUS_THRESHOLD) or (abs(dxl_goal_position[DXL2_ID-1] - dxl2_present_position) > DXL_MOVING_STATUS_THRESHOLD) or 
-                        (abs(dxl_goal_position[DXL3_ID-1] - dxl3_present_position) > DXL_MOVING_STATUS_THRESHOLD)):
+                if not ((abs(dxl_goal_position[DXL1_ID-1] - dxl1_present_position) > DXL_MOVING_STATUS_THRESHOLD) or (abs(dxl_goal_position[DXL2_ID-1] - dxl2_present_position) > DXL_MOVING_STATUS_THRESHOLD)):
                     break
-
+# (abs(dxl_goal_position[DXL3_ID-1] - dxl3_present_position) > DXL_MOVING_STATUS_THRESHOLD)
                 # Check for timeout - break loop if timeout is reached
                 if time.time() - start_time > timeout:
                     print("Timeout reached. Exiting loop.")
                     break
 
-        print("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n" % 
-                    (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
+        # print("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n" % 
+        #             (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
 
     def shutdown(self):
         self.disable_torque(DXL1_ID)
         self.disable_torque(DXL2_ID)
-        self.disable_torque(DXL3_ID)
+        # self.disable_torque(DXL3_ID)
 
         # Close port
         self.portHandler.closePort()
@@ -180,7 +179,7 @@ class MotorControl:
             print("Dynamixel#%d has been successfully connected" % motor_id)
 
 
-        # Add parameter storage for Dynamixel#2 present position value
+        # Add parameter storage for Dynamixel present position value
         dxl_addparam_result = self.groupread_num.addParam(motor_id)
         if dxl_addparam_result != True:
             print("[ID:%03d] groupSyncRead addparam failed" % motor_id)
