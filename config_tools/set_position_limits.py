@@ -4,6 +4,7 @@ from dynamixel_sdk import *  # Uses Dynamixel SDK library
 # Control table addresses for Position Limits
 ADDR_MAX_POSITION_LIMIT = 48
 ADDR_MIN_POSITION_LIMIT = 52
+ADDR_TORQUE_ENABLE      = 64
 LEN_POSITION_LIMIT      = 4
 
 # Protocol version
