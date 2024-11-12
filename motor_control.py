@@ -111,52 +111,51 @@ class MotorControl:
             # Clear syncwrite parameter storage
             self.groupwrite_num.clearParam()
 
-            while 1:
-                # Syncread present position
-                dxl_comm_result = self.groupread_num.txRxPacket()
-                if dxl_comm_result != COMM_SUCCESS:
-                    print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+            # Syncread present position
+            dxl_comm_result = self.groupread_num.txRxPacket()
+            if dxl_comm_result != COMM_SUCCESS:
+                print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
 
-                # Check if groupsyncread data of Dynamixel#1 is available
-                dxl_getdata_result = self.groupread_num.isAvailable(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-                if dxl_getdata_result != True:
-                    print("[ID:%03d] groupSyncRead getdata failed" % DXL1_ID)
-                    quit()
+            # Check if groupsyncread data of Dynamixel#1 is available
+            dxl_getdata_result = self.groupread_num.isAvailable(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+            if dxl_getdata_result != True:
+                print("[ID:%03d] groupSyncRead getdata failed" % DXL1_ID)
+                quit()
 
-                # Check if groupsyncread data of Dynamixel#2 is available
-                dxl_getdata_result = self.groupread_num.isAvailable(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-                if dxl_getdata_result != True:
-                    print("[ID:%03d] groupSyncRead getdata failed" % DXL2_ID)
-                    quit()
+            # Check if groupsyncread data of Dynamixel#2 is available
+            dxl_getdata_result = self.groupread_num.isAvailable(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+            if dxl_getdata_result != True:
+                print("[ID:%03d] groupSyncRead getdata failed" % DXL2_ID)
+                quit()
 
-                # # Check if groupsyncread data of Dynamixel#3 is available
-                # dxl_getdata_result = self.groupread_num.isAvailable(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-                # if dxl_getdata_result != True:
-                #     print("[ID:%03d] groupSyncRead getdata failed" % DXL3_ID)
-                #     quit()
+            # # Check if groupsyncread data of Dynamixel#3 is available
+            # dxl_getdata_result = self.groupread_num.isAvailable(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+            # if dxl_getdata_result != True:
+            #     print("[ID:%03d] groupSyncRead getdata failed" % DXL3_ID)
+            #     quit()
 
-                # Get Dynamixel#1 present position value
-                dxl1_present_position = self.groupread_num.getData(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+            # Get Dynamixel#1 present position value
+            dxl1_present_position = self.groupread_num.getData(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
-                # Get Dynamixel#2 present position value
-                dxl2_present_position = self.groupread_num.getData(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+            # Get Dynamixel#2 present position value
+            dxl2_present_position = self.groupread_num.getData(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
-                # # Get Dynamixel#3 present position value
-                # dxl2_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+            # # Get Dynamixel#3 present position value
+            # dxl2_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
-                # print("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n" % 
-                #     (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
+            # print("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n" % 
+            #     (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
 
-                if not ((abs(dxl_goal_position[DXL1_ID-1] - dxl1_present_position) > DXL_MOVING_STATUS_THRESHOLD) or (abs(dxl_goal_position[DXL2_ID-1] - dxl2_present_position) > DXL_MOVING_STATUS_THRESHOLD)):
-                    break
-# (abs(dxl_goal_position[DXL3_ID-1] - dxl3_present_position) > DXL_MOVING_STATUS_THRESHOLD)
-                # Check for timeout - break loop if timeout is reached
-                if time.time() - start_time > timeout:
-                    print("Timeout reached. Exiting loop.")
-                    break
+            if not ((abs(dxl_goal_position[DXL1_ID-1] - dxl1_present_position) > DXL_MOVING_STATUS_THRESHOLD) or (abs(dxl_goal_position[DXL2_ID-1] - dxl2_present_position) > DXL_MOVING_STATUS_THRESHOLD)):
+                break
+        # (abs(dxl_goal_position[DXL3_ID-1] - dxl3_present_position) > DXL_MOVING_STATUS_THRESHOLD)
+            # Check for timeout - break loop if timeout is reached
+            if time.time() - start_time > timeout:
+                print("Timeout reached. Exiting loop.")
+                break
 
-        # print("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n" % 
-        #             (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
+    # print("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n" % 
+    #             (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
 
     def shutdown(self):
         self.disable_torque(DXL1_ID)
