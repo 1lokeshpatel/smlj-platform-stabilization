@@ -32,6 +32,8 @@ DXL_MOVING_STATUS_THRESHOLD = 20                            # Dynamixel moving s
 COMM_SUCCESS                = 0                             # Communication Success result value
 COMM_TX_FAIL                = -1001                         # Communication Tx Failed
 
+NUM_MOTORS                  = 2                             # Number of motors 
+
 class MotorControl:
     def __init__(self):
         # Initialize PortHandler Structs
@@ -64,30 +66,32 @@ class MotorControl:
         else:
             print("Failed to set baudrate")
             return False
-        
+
+        # Enable torque based on the number of motors
         self.enable_torque(DXL1_ID)
         self.enable_torque(DXL2_ID)
-        # self.enable_torque(DXL3_ID)
+        if NUM_MOTORS == 3:
+            self.enable_torque(DXL3_ID)
 
         return True
 
-    def move_motor(self, motorPos1, motorPos2, motorPos3):
+    def move_motor(self, motorPos1, motorPos2, motorPos3=0):
         # Present positions
         dxl1_present_position = 0                                   
         dxl2_present_position = 0
         dxl3_present_position = 0
 
         # [motorPos1, motorPos2, motorPos3]
-        dxl_goal_position = [motorPos1, motorPos2, motorPos3]
+        dxl_goal_position = [motorPos1, motorPos2]
+        if NUM_MOTORS == 3:
+            dxl_goal_position.append(motorPos3)
 
         timeout = 5  # Timeout in seconds
         start_time = time.time()
 
-        while 1:
-
+        while True:
             # Add goal position values to the SyncWrite parameter storage for each motor
-            for i, dxl_id in enumerate([DXL1_ID, DXL2_ID]):
-                # Extract goal position for each motor and pack it into 4 bytes (int32)
+            for i, dxl_id in enumerate([DXL1_ID, DXL2_ID] if NUM_MOTORS == 2 else [DXL1_ID, DXL2_ID, DXL3_ID]):
                 goal_position = dxl_goal_position[i]
                 param_goal_position = [
                     DXL_LOBYTE(DXL_LOWORD(goal_position)), 
@@ -96,7 +100,6 @@ class MotorControl:
                     DXL_HIBYTE(DXL_HIWORD(goal_position))
                 ]
 
-                # Add Dynamixel goal position value to the Syncwrite parameter storage
                 dxl_addparam_result = self.groupwrite_num.addParam(dxl_id, param_goal_position)
                 if not dxl_addparam_result:
                     print(f"[ID:{dxl_id:03d}] groupSyncWrite addparam failed")
@@ -116,53 +119,37 @@ class MotorControl:
             if dxl_comm_result != COMM_SUCCESS:
                 print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
 
-            # Check if groupsyncread data of Dynamixel#1 is available
-            dxl_getdata_result = self.groupread_num.isAvailable(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-            if dxl_getdata_result != True:
-                print("[ID:%03d] groupSyncRead getdata failed" % DXL1_ID)
-                quit()
+            # Check if groupsyncread data of Dynamixels are available
+            for dxl_id in [DXL1_ID, DXL2_ID] if NUM_MOTORS == 2 else [DXL1_ID, DXL2_ID, DXL3_ID]:
+                if not self.groupread_num.isAvailable(dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION):
+                    print(f"[ID:{dxl_id:03d}] groupSyncRead getdata failed")
+                    quit()
 
-            # Check if groupsyncread data of Dynamixel#2 is available
-            dxl_getdata_result = self.groupread_num.isAvailable(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-            if dxl_getdata_result != True:
-                print("[ID:%03d] groupSyncRead getdata failed" % DXL2_ID)
-                quit()
-
-            # # Check if groupsyncread data of Dynamixel#3 is available
-            # dxl_getdata_result = self.groupread_num.isAvailable(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-            # if dxl_getdata_result != True:
-            #     print("[ID:%03d] groupSyncRead getdata failed" % DXL3_ID)
-            #     quit()
-
-            # Get Dynamixel#1 present position value
+            # Get present position values
             dxl1_present_position = self.groupread_num.getData(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-
-            # Get Dynamixel#2 present position value
             dxl2_present_position = self.groupread_num.getData(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+            if NUM_MOTORS == 3:
+                dxl3_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
-            # # Get Dynamixel#3 present position value
-            # dxl2_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-
-            # print("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n" % 
-            #     (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
-
-            if not ((abs(dxl_goal_position[DXL1_ID-1] - dxl1_present_position) > DXL_MOVING_STATUS_THRESHOLD) or (abs(dxl_goal_position[DXL2_ID-1] - dxl2_present_position) > DXL_MOVING_STATUS_THRESHOLD)):
+            # Check if motors have reached the goal position
+            if not (
+                (abs(dxl_goal_position[0] - dxl1_present_position) > DXL_MOVING_STATUS_THRESHOLD) or
+                (abs(dxl_goal_position[1] - dxl2_present_position) > DXL_MOVING_STATUS_THRESHOLD) or
+                (NUM_MOTORS == 3 and abs(dxl_goal_position[2] - dxl3_present_position) > DXL_MOVING_STATUS_THRESHOLD)
+            ):
                 break
-        # (abs(dxl_goal_position[DXL3_ID-1] - dxl3_present_position) > DXL_MOVING_STATUS_THRESHOLD)
-            # Check for timeout - break loop if timeout is reached
+
+            # Timeout check
             if time.time() - start_time > timeout:
                 print("Timeout reached. Exiting loop.")
                 break
 
-    # print("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n" % 
-    #             (DXL1_ID, dxl_goal_position[DXL1_ID-1], dxl1_present_position, DXL2_ID, dxl_goal_position[DXL2_ID-1], dxl2_present_position, DXL3_ID, dxl_goal_position[DXL3_ID-1], dxl3_present_position))
-
     def shutdown(self):
         self.disable_torque(DXL1_ID)
         self.disable_torque(DXL2_ID)
-        # self.disable_torque(DXL3_ID)
+        if NUM_MOTORS == 3:
+            self.disable_torque(DXL3_ID)
 
-        # Close port
         self.portHandler.closePort()
 
     def enable_torque(self, motor_id):
