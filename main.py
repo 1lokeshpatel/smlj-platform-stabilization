@@ -12,17 +12,13 @@ try:
         quit()
 
     for i in range(10):
-        ctrl.move_motor(motor_control.angle_to_position(0), 
-                        motor_control.angle_to_position(0), 
-                        motor_control.angle_to_position(0))
+        ctrl.move_motor(motor_control.angle_to_position(210), 
+                        motor_control.angle_to_position(210), 
+                        motor_control.angle_to_position(210))
 
-        ctrl.move_motor(motor_control.angle_to_position(180), 
-                        motor_control.angle_to_position(180), 
-                        motor_control.angle_to_position(180))
-
-        ctrl.move_motor(motor_control.angle_to_position(360), 
-                        motor_control.angle_to_position(360), 
-                        motor_control.angle_to_position(360))
+        ctrl.move_motor(motor_control.angle_to_position(260), 
+                        motor_control.angle_to_position(260), 
+                        motor_control.angle_to_position(260))
 
 except Exception as e:
     print(f"An error occurred: {e}")
