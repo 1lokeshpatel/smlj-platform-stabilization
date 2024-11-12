@@ -11,9 +11,18 @@ try:
         print("Motor setup failed. Exiting...")
         quit()
 
-    ctrl.move_motor(motor_control.angle_to_position(25), 
-                    motor_control.angle_to_position(25), 
-                    motor_control.angle_to_position(25))
+    for i in range(10):
+        ctrl.move_motor(motor_control.angle_to_position(0), 
+                        motor_control.angle_to_position(0), 
+                        motor_control.angle_to_position(0))
+
+        ctrl.move_motor(motor_control.angle_to_position(180), 
+                        motor_control.angle_to_position(180), 
+                        motor_control.angle_to_position(180))
+
+        ctrl.move_motor(motor_control.angle_to_position(360), 
+                        motor_control.angle_to_position(360), 
+                        motor_control.angle_to_position(360))
 
 except Exception as e:
     print(f"An error occurred: {e}")
