@@ -191,9 +191,9 @@ class MotorControl:
             )
         elif NUM_MOTORS == 3:
             print(
-                f"[ID:{DXL1_ID:03d}] PresPos:{(dxl1_present_position*360)/4095:04d}\t"
-                f"[ID:{DXL2_ID:03d}] PresPos:{(dxl2_present_position*360)/4095:04d}\t"
-                f"[ID:{DXL3_ID:03d}] PresPos:{(dxl3_present_position*360)/4095:04d}"
+                f"[ID:{DXL1_ID:03d}] PresPos:{(dxl1_present_position*360)/4095:04f}\t"
+                f"[ID:{DXL2_ID:03d}] PresPos:{(dxl2_present_position*360)/4095:04f}\t"
+                f"[ID:{DXL3_ID:03d}] PresPos:{(dxl3_present_position*360)/4095:04f}"
             )
 
     def enable_torque(self, motor_id):
