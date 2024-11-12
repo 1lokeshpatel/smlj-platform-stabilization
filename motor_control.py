@@ -131,11 +131,24 @@ class MotorControl:
             if NUM_MOTORS == 3:
                 dxl3_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
+            # Print present and goal positions
+            if NUM_MOTORS == 2:
+                print(
+                    f"[ID:{DXL1_ID:03d}] GoalPos:{dxl_goal_position[DXL1_ID-1]:04d}  PresPos:{dxl1_present_position:04d}\t"
+                    f"[ID:{DXL2_ID:03d}] GoalPos:{dxl_goal_position[DXL2_ID-1]:04d}  PresPos:{dxl2_present_position:04d}"
+                )
+            elif NUM_MOTORS == 3:
+                print(
+                    f"[ID:{DXL1_ID:03d}] GoalPos:{dxl_goal_position[DXL1_ID-1]:04d}  PresPos:{dxl1_present_position:04d}\t"
+                    f"[ID:{DXL2_ID:03d}] GoalPos:{dxl_goal_position[DXL2_ID-1]:04d}  PresPos:{dxl2_present_position:04d}\t"
+                    f"[ID:{DXL3_ID:03d}] GoalPos:{dxl_goal_position[DXL3_ID-1]:04d}  PresPos:{dxl3_present_position:04d}"
+                )
+
             # Check if motors have reached the goal position
             if not (
-                (abs(dxl_goal_position[0] - dxl1_present_position) > DXL_MOVING_STATUS_THRESHOLD) or
-                (abs(dxl_goal_position[1] - dxl2_present_position) > DXL_MOVING_STATUS_THRESHOLD) or
-                (NUM_MOTORS == 3 and abs(dxl_goal_position[2] - dxl3_present_position) > DXL_MOVING_STATUS_THRESHOLD)
+                (abs(dxl_goal_position[DXL1_ID-1] - dxl1_present_position) > DXL_MOVING_STATUS_THRESHOLD) or
+                (abs(dxl_goal_position[DXL2_ID-1] - dxl2_present_position) > DXL_MOVING_STATUS_THRESHOLD) or
+                (NUM_MOTORS == 3 and abs(dxl_goal_position[DXL3_ID-1] - dxl3_present_position) > DXL_MOVING_STATUS_THRESHOLD)
             ):
                 break
 
