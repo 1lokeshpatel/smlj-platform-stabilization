@@ -32,7 +32,7 @@ DXL_MOVING_STATUS_THRESHOLD = 20                            # Dynamixel moving s
 COMM_SUCCESS                = 0                             # Communication Success result value
 COMM_TX_FAIL                = -1001                         # Communication Tx Failed
 
-NUM_MOTORS                  = 2                             # Number of motors 
+NUM_MOTORS                  = 3                             # Number of motors 
 
 class MotorControl:
     def __init__(self):
