@@ -165,6 +165,37 @@ class MotorControl:
 
         self.portHandler.closePort()
 
+    def read_status(self):
+        # Syncread present position
+        dxl_comm_result = self.groupread_num.txRxPacket()
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+
+        # Check if groupsyncread data of Dynamixels are available
+        for dxl_id in [DXL1_ID, DXL2_ID] if NUM_MOTORS == 2 else [DXL1_ID, DXL2_ID, DXL3_ID]:
+            if not self.groupread_num.isAvailable(dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION):
+                print(f"[ID:{dxl_id:03d}] groupSyncRead getdata failed")
+                quit()
+
+        # Get present position values
+        dxl1_present_position = self.groupread_num.getData(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+        dxl2_present_position = self.groupread_num.getData(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+        if NUM_MOTORS == 3:
+            dxl3_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+
+        # Print present and goal positions
+        if NUM_MOTORS == 2:
+            print(
+                f"[ID:{DXL1_ID:03d}] PresPos:{dxl1_present_position:04d}\t"
+                f"[ID:{DXL2_ID:03d}] PresPos:{dxl2_present_position:04d}"
+            )
+        elif NUM_MOTORS == 3:
+            print(
+                f"[ID:{DXL1_ID:03d}] PresPos:{dxl1_present_position:04d}\t"
+                f"[ID:{DXL2_ID:03d}] PresPos:{dxl2_present_position:04d}\t"
+                f"[ID:{DXL3_ID:03d}] PresPos:{dxl3_present_position:04d}"
+            )
+
     def enable_torque(self, motor_id):
         # Enable Dynamixel Torque
         dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, motor_id, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
