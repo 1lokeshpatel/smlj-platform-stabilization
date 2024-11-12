@@ -12,6 +12,7 @@ ADDR_MIN_POSITION_LIMIT = 52
 ADDR_TORQUE_ENABLE      = 64
 ADDR_GOAL_POSITION      = 116
 ADDR_PRESENT_POSITION   = 132
+ADDR_OPERATING_MODE = 11
 
 # Data Byte Length
 LEN_GOAL_POSITION       = 4
@@ -35,6 +36,7 @@ COMM_SUCCESS                = 0                             # Communication Succ
 COMM_TX_FAIL                = -1001                         # Communication Tx Failed
 
 NUM_MOTORS                  = 3                             # Number of motors 
+EXTENDED_POSITION_CONTROL_MODE = 4
 
 class MotorControl:
     def __init__(self):
@@ -197,6 +199,24 @@ class MotorControl:
                 f"[ID:{DXL2_ID:03d}] PresPos:{(dxl2_present_position*360)/4095:04f}\t"
                 f"[ID:{DXL3_ID:03d}] PresPos:{(dxl3_present_position*360)/4095:04f}"
             )
+
+    def set_extended_operating_mode(self, motor_id):
+        # Set operating mode to Extended Position Control Mode
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(
+            self.portHandler, motor_id, ADDR_OPERATING_MODE, EXTENDED_POSITION_CONTROL_MODE
+        )
+
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+            return False
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+            return False
+        else:
+            print(f"Dynamixel ID:{motor_id} is set to Extended Position Control Mode")
+        return True
+
+
 
     def set_position_limits(self, motor_id, min_limit, max_limit):
         """
