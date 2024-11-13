@@ -17,9 +17,10 @@ try:
 
     # while 1:
     #     ctrl.read_status()
-    ctrl.set_extended_operating_mode(1)
-    ctrl.set_extended_operating_mode(2)
-    ctrl.set_extended_operating_mode(3)
+    # ctrl.groupwrite_num.clearParam()
+    # ctrl.set_extended_operating_mode(1)
+    # ctrl.set_extended_operating_mode(2)
+    # ctrl.set_extended_operating_mode(3)
     ctrl.set_position_limits(1, motor_control.angle_to_position(290), motor_control.angle_to_position(355))
     ctrl.set_position_limits(2, motor_control.angle_to_position(300), motor_control.angle_to_position(355))
     ctrl.set_position_limits(3, motor_control.angle_to_position(40), motor_control.angle_to_position(130))
