@@ -169,6 +169,35 @@ class MotorControl:
 
         self.portHandler.closePort()
 
+    def enable_torque(self, motor_id):
+        # Enable Dynamixel Torque
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, motor_id, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+            return False
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+            return False
+        else:
+            print("Dynamixel#%d has been successfully connected" % motor_id)
+
+
+        # Add parameter storage for Dynamixel present position value
+        dxl_addparam_result = self.groupread_num.addParam(motor_id)
+        if dxl_addparam_result != True:
+            print("[ID:%03d] groupSyncRead addparam failed" % motor_id)
+            quit()
+        
+        return True
+    
+    def disable_torque(self, motor_id):
+        # Disable Dynamixel torque
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, motor_id, ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
     def read_status(self):
         # Syncread present position
         dxl_comm_result = self.groupread_num.txRxPacket()
@@ -199,90 +228,6 @@ class MotorControl:
                 f"[ID:{DXL2_ID:03d}] PresPos:{(dxl2_present_position*360)/4095:04f}\t"
                 f"[ID:{DXL3_ID:03d}] PresPos:{(dxl3_present_position*360)/4095:04f}"
             )
-
-    def set_extended_operating_mode(self, motor_id):
-        # Set operating mode to Extended Position Control Mode
-        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(
-            self.portHandler, motor_id, ADDR_OPERATING_MODE, EXTENDED_POSITION_CONTROL_MODE
-        )
-
-        if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
-            return False
-        elif dxl_error != 0:
-            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
-            return False
-        else:
-            print(f"Dynamixel ID:{motor_id} is set to Extended Position Control Mode")
-        return True
-
-
-
-    def set_position_limits(self, motor_id, min_limit, max_limit):
-        """
-        Set the position limits for the given motor ID.
-        :param motor_id: ID of the Dynamixel motor
-        :param min_limit: Minimum position limit (0-4095 for XM430-W210)
-        :param max_limit: Maximum position limit (0-4095 for XM430-W210)
-        """
-        # Disable torque before setting limits
-        self.disable_torque(motor_id)
-
-        # Set maximum position limit
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(
-            self.portHandler, motor_id, ADDR_MAX_POSITION_LIMIT, max_limit
-        )
-        if dxl_comm_result != COMM_SUCCESS:
-            print(f"Failed to set max limit for Motor ID {motor_id}: {self.packetHandler.getTxRxResult(dxl_comm_result)}")
-            return False
-        elif dxl_error != 0:
-            print(f"Error setting max limit for Motor ID {motor_id}: {self.packetHandler.getRxPacketError(dxl_error)}")
-
-        # Set minimum position limit
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(
-            self.portHandler, motor_id, ADDR_MIN_POSITION_LIMIT, min_limit
-        )
-        if dxl_comm_result != COMM_SUCCESS:
-            print(f"Failed to set min limit for Motor ID {motor_id}: {self.packetHandler.getTxRxResult(dxl_comm_result)}")
-            return False
-        elif dxl_error != 0:
-            print(f"Error setting min limit for Motor ID {motor_id}: {self.packetHandler.getRxPacketError(dxl_error)}")
-
-        print(f"Position limits set for Motor ID {motor_id}: Min={min_limit}, Max={max_limit}")
-        # Re-enable torque
-        self.enable_torque(motor_id)
-
-        return True
-
-
-    def enable_torque(self, motor_id):
-        # Enable Dynamixel Torque
-        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, motor_id, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
-        if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
-            return False
-        elif dxl_error != 0:
-            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
-            return False
-        else:
-            print("Dynamixel#%d has been successfully connected" % motor_id)
-
-
-        # Add parameter storage for Dynamixel present position value
-        dxl_addparam_result = self.groupread_num.addParam(motor_id)
-        if dxl_addparam_result != True:
-            print("[ID:%03d] groupSyncRead addparam failed" % motor_id)
-            quit()
-        
-        return True
-    
-    def disable_torque(self, motor_id):
-        # Disable Dynamixel torque
-        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, motor_id, ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
-        if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
-        elif dxl_error != 0:
-            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 
 # Convert angle to Dynamixel position (0-4095 range)
 def angle_to_position(angle):
