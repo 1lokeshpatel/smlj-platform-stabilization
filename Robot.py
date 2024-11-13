@@ -49,9 +49,6 @@ class Robot:
             self.ctrl.move_motor(motor_control.angle_to_position(motor_angles[0]),
                                  motor_control.angle_to_position(motor_angles[1]),
                                  motor_control.angle_to_position(motor_angles[2]))
-
-        # Shutdown robot
-        self.deactivate()
     
     def set_to_initial_position(self):
         self.adjust_posture(self.starting_position, 10)
