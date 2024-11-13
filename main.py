@@ -33,6 +33,8 @@ try:
         ctrl.move_motor(motor_control.angle_to_position(321.46), 
                         motor_control.angle_to_position(327.4), 
                         motor_control.angle_to_position(64.46))
+        time.sleep(3)
+
 
 except Exception as e:
     print(f"An error occurred: {e}")
