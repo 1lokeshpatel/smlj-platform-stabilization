@@ -18,7 +18,7 @@ class Robot:
         self.links = [0.05984, 0.1, 0.97, 0.105]
 
         # Initial posture (theta, phi, pz)
-        self.starting_position = [0, 0, 0.03]
+        self.starting_position = [0, 0, 0.015]
         self.max_pz = 0.160
         self.min_pz = 0.0
         self.max_phi = 20
