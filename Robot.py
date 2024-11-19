@@ -28,6 +28,7 @@ class Robot:
         if not self.ctrl.setup():
             print("Motor setup failed. Exiting...")
             quit()
+        self.ctrl.calibrate()
 
     # Method to shut down the robot
     def deactivate(self):
