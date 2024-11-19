@@ -38,6 +38,25 @@ goal = [0, 0]
 # finally:
 #     ctrl.shutdown()
 #     print("Shutdown complete.")
+def get_cam_feed():
+    global frame
+    while(True):
+        # Capture and process each frame
+        frame = camera.capture_image()
+        if frame is None:
+            break  # Stop if frame capture fails
+
+def find_ball():
+    global x, y, area
+
+    while(True):
+        x, y, area = camera.locate_ball(frame)
+
+        # Optional: print the ball's coordinates and area
+        if area > 0:
+            print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
+
+        camera.display_video(frame)
 
 try:
     robot = Robot.Robot()
@@ -46,20 +65,13 @@ try:
 
     robot.set_to_initial_position()
 
-    while True:
-        # Capture and process each frame
-        frame = camera.capture_image()
-        if frame is None:
-            break  # Stop if frame capture fails
+    cam_thread = threading.Thread(target=get_cam_feed)
+    find_ball_thread = threading.Thread(target=find_ball)
 
-        # Locate ball and display the frame
-        x, y, area = camera.locate_ball(frame)
-        # camera.display_video(frame)
+    cam_thread.start()
+    find_ball_thread.start()
 
-        # Optional: print the ball's coordinates and area
-        if area > 0:
-            print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
-
+    while(True):
         Current_value = [x, y, area]
 
         if x != -1:
