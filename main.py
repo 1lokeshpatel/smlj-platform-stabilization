@@ -41,7 +41,6 @@ goal = [0, 0]
 
 try:
     robot = Robot.Robot()
-    ctrl = motor_control.MotorControl()
     camera = cv.Camera()
     pid = pid_control.PID(K_PID, k, a)
 
