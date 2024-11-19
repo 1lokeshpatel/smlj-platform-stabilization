@@ -70,10 +70,10 @@ def find_ball():
 try:
     robot.set_to_initial_position()
 
-    # frame = camera.capture_image()
-    # if frame is None:
-    #     print("failed")
-    # camera.display_video(frame)
+    frame = camera.capture_image()
+    if frame is None:
+        print("failed")
+    camera.display_video(frame)
 
     cam_thread = threading.Thread(target=get_cam_feed)
     # time.sleep(1)
