@@ -111,7 +111,9 @@ class MotorControl:
         self.set_velocity_profile(DXL2_ID, 6)    
         self.set_velocity_profile(DXL3_ID, 6)    
 
-        self.set_extended_position_mode([DXL1_ID, DXL2_ID, DXL3_ID])
+        self.set_extended_position_mode(DXL1_ID)
+        self.set_extended_position_mode(DXL2_ID)
+        self.set_extended_position_mode(DXL3_ID)
 
     def move_motor(self, motorPos1, motorPos2, motorPos3=0):
 
@@ -263,27 +265,17 @@ class MotorControl:
         elif dxl_error != 0:
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 
-    # Adding parameters to syncwrite
-    def set_extended_position_mode(self, motor_ids):
-        for dxl_id in motor_ids:
-            # Create a parameter for Extended Position Mode (1 byte data)
-            param_operating_mode = [EXTENDED_POSITION_CONTROL_MODE]
+    def set_extended_position_mode(self, motor_id):
 
-            # Add the parameter for the current motor ID to the GroupSyncWrite
-            add_param_result = self.groupwrite_num.addParam(dxl_id, param_operating_mode)
-            if not add_param_result:
-                print(f"Failed to add parameter for Dynamixel ID {dxl_id}")
-                return False
-
-        # Syncwrite control mode
-        dxl_comm_result = self.groupwrite_num.txPacket()
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, motor_id, ADDR_OPERATING_MODE, EXTENDED_POSITION_CONTROL_MODE)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
             return False
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+            return False
 
-        # Clear syncwrite parameter storage
-        self.groupwrite_num.clearParam()
-        print("Extended Position Control Mode set successfully for all motors.")
+        print(f"Extended Position Control Mode set successfully for {motor_id:03d}")
         return True
 
     def read_status(self):
