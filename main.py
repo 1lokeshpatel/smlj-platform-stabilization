@@ -19,6 +19,11 @@ robot = Robot.Robot()
 camera = cv.Camera()
 pid = pid_control.PID(K_PID, k, a)
 
+frame = None
+x = None
+y = None
+area = None
+
 # # motor test
 # try:
 #     if not ctrl.setup():
@@ -43,7 +48,6 @@ pid = pid_control.PID(K_PID, k, a)
 #     ctrl.shutdown()
 #     print("Shutdown complete.")
 def get_cam_feed():
-    global frame, x, y, area
     while(True):
         # Capture and process each frame
         frame = camera.capture_image()
@@ -51,14 +55,15 @@ def get_cam_feed():
             break  # Stop if frame capture fails
 
 def find_ball():
-    x, y, area = camera.locate_ball(frame)
+    while(True):
+        x, y, area = camera.locate_ball(frame)
 
-    # Optional: print the ball's coordinates and area
-    if area > 0:
-        print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
-        print("Finding ball")
+        # Optional: print the ball's coordinates and area
+        if area > 0:
+            print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
+            print("Finding ball")
 
-    camera.display_video(frame)
+        camera.display_video(frame)
 
 try:
     robot.set_to_initial_position()
