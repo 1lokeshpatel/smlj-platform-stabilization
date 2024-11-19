@@ -45,10 +45,11 @@ class Robot:
 
         motor_angles = ik2.calculate_motor_angles(theta, phi)
 
-        for i in range(t):
-            self.ctrl.move_motor(motor_control.angle_to_position(motor_angles[0]),
+        self.ctrl.move_motor(motor_control.angle_to_position(motor_angles[0]),
                                  motor_control.angle_to_position(motor_angles[1]),
                                  motor_control.angle_to_position(motor_angles[2]))
+
+        time.sleep(t)
     
     def set_to_initial_position(self):
         self.adjust_posture(self.starting_position, 10)
