@@ -54,8 +54,6 @@ def get_cam_feed():
         frame = camera.capture_image()
         if frame is None:
             break  # Stop if frame capture fails
-        camera.display_video(frame)
-        print("True")
 
 def find_ball():
     global x, y, area
@@ -66,21 +64,16 @@ def find_ball():
         if area > 0:
             print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
             print("Finding ball")
+        camera.display_video(frame)
 
 try:
     robot.set_to_initial_position()
 
-    frame = camera.capture_image()
-    if frame is None:
-        print("failed")
-    camera.display_video(frame)
-
     cam_thread = threading.Thread(target=get_cam_feed)
-    # time.sleep(1)
-    # find_ball_thread = threading.Thread(target=find_ball)
+    find_ball_thread = threading.Thread(target=find_ball)
 
     cam_thread.start()
-    # find_ball_thread.start()
+    find_ball_thread.start()
 
     while(True):
         Current_value = [x, y, area]
