@@ -58,27 +58,22 @@ def get_cam_feed():
             print("Finding ball")
 
         camera.display_video(frame)
-    
-    print("Camera running")
 
 try:
-    # robot.set_to_initial_position()
+    robot.set_to_initial_position()
 
-    cam_thread = threading.Thread(target=get_cam_feed)
+    # cam_thread = threading.Thread(target=get_cam_feed)
 
-    cam_thread.start()
+    # cam_thread.start()
 
-    print("Started thread")
+    # while(True):
+    #     Current_value = [x, y, area]
 
-    while(True):
-        print("Running main loop")
-        Current_value = [x, y, area]
+    #     if x != -1:
+    #         theta, phi = pid.calc(goal, Current_value)
 
-        if x != -1:
-            theta, phi = pid.calc(goal, Current_value)
-
-        new_position = [0, 0, robot.starting_position[2]]
-        robot.adjust_posture(new_position, 0.01)
+    #     new_position = [0, 0, robot.starting_position[2]]
+    #     robot.adjust_posture(new_position, 0.01)
 
 except Exception as e:
     print(f"An error occurred: {e}")
