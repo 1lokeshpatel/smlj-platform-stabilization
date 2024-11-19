@@ -8,12 +8,12 @@ ctrl = motor_control.MotorControl()
 
 # motor test
 try:
-    if not ctrl.setup():
-        print("Motor setup failed. Exiting...")
-        quit()
+    # if not ctrl.setup():
+    #     print("Motor setup failed. Exiting...")
+    #     quit()
 
-    ctrl.calibrate()
-    time.sleep(15)
+    while(1):
+        ctrl.read_status()
 
 
 except Exception as e:
