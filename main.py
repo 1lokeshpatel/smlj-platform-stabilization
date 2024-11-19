@@ -85,6 +85,7 @@ try:
     #find_ball_thread.start()
 
     while(True):
+        print("Main loop running")
         Current_value = [x, y, area]
 
         if x != -1:
