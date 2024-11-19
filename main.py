@@ -55,6 +55,7 @@ def get_cam_feed():
         print(frame)
         if frame is None:
             break  # Stop if frame capture fails
+        camera.display_video(frame)
 
 def find_ball():
     global x, y, area
@@ -66,27 +67,25 @@ def find_ball():
             print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
             print("Finding ball")
 
-        camera.display_video(frame)
-
 try:
     robot.set_to_initial_position()
 
     cam_thread = threading.Thread(target=get_cam_feed)
-    time.sleep(1)
-    find_ball_thread = threading.Thread(target=find_ball)
+    # time.sleep(1)
+    # find_ball_thread = threading.Thread(target=find_ball)
 
     cam_thread.start()
-    find_ball_thread.start()
+    # find_ball_thread.start()
 
-    while(True):
-        Current_value = [x, y, area]
+    # while(True):
+    #     Current_value = [x, y, area]
 
-        if x != -1:
-            theta, phi = pid.calc(goal, Current_value)
-            print(f"Theta: {theta}, Phi: {phi}")
+    #     if x != -1:
+    #         theta, phi = pid.calc(goal, Current_value)
+    #         print(f"Theta: {theta}, Phi: {phi}")
 
-        new_position = [0, 0, robot.starting_position[2]]
-        robot.adjust_posture(new_position, 0.01)
+    #     new_position = [0, 0, robot.starting_position[2]]
+    #     robot.adjust_posture(new_position, 0.01)
 
 except Exception as e:
     print(f"An error occurred: {e}")
