@@ -71,6 +71,7 @@ try:
     robot.set_to_initial_position()
 
     cam_thread = threading.Thread(target=get_cam_feed)
+    time.sleep(1)
     find_ball_thread = threading.Thread(target=find_ball)
 
     cam_thread.start()
