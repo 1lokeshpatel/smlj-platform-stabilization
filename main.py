@@ -56,10 +56,6 @@ try:
         x, y, area = camera.locate_ball(frame)
         camera.display_video(frame)
 
-        # Exit on pressing 'q'
-        if cv.waitKey(1) & 0xFF == ord('q'):
-            break
-
         # Optional: print the ball's coordinates and area
         if area > 0:
             print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
