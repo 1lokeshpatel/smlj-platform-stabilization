@@ -62,29 +62,29 @@ def find_ball():
 
 try:
     print("Begins")
-    robot = Robot.Robot()
-    camera = cv.Camera()
-    pid = pid_control.PID(K_PID, k, a)
+    # robot = Robot.Robot()
+    # camera = cv.Camera()
+    # pid = pid_control.PID(K_PID, k, a)
 
-    robot.set_to_initial_position()
+    # robot.set_to_initial_position()
 
-    cam_thread = threading.Thread(target=get_cam_feed)
-    find_ball_thread = threading.Thread(target=find_ball)
+    # cam_thread = threading.Thread(target=get_cam_feed)
+    # find_ball_thread = threading.Thread(target=find_ball)
 
-    print("Started threads")
+    # print("Started threads")
 
-    cam_thread.start()
-    find_ball_thread.start()
+    # cam_thread.start()
+    # find_ball_thread.start()
 
-    while(True):
-        print("Running main loop")
-        Current_value = [x, y, area]
+    # while(True):
+    #     print("Running main loop")
+    #     Current_value = [x, y, area]
 
-        if x != -1:
-            theta, phi = pid.calc(goal, Current_value)
+    #     if x != -1:
+    #         theta, phi = pid.calc(goal, Current_value)
 
-        new_position = [0, 0, robot.starting_position[2]]
-        robot.adjust_posture(new_position, 0.01)
+    #     new_position = [0, 0, robot.starting_position[2]]
+    #     robot.adjust_posture(new_position, 0.01)
 
 except Exception as e:
     print(f"An error occurred: {e}")
