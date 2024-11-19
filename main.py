@@ -54,15 +54,17 @@ def get_cam_feed():
         frame = camera.capture_image()
         if frame is None:
             break  # Stop if frame capture fails
-        
+
         x, y, area = camera.locate_ball(frame)
 
         # Optional: print the ball's coordinates and area
         if area > 0:
             print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
             print("Finding ball")
+
         camera.display_video(frame)
-        time.sleep(0.01)
+
+        time.sleep(0)
 
 def find_ball():
     global x, y, area
