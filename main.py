@@ -74,8 +74,8 @@ try:
         print("Running main loop")
         Current_value = [x, y, area]
 
-        if x != -1:
-            theta, phi = pid.calc(goal, Current_value)
+        # if x != -1:
+            # theta, phi = pid.calc(goal, Current_value)
 
         new_position = [0, 0, robot.starting_position[2]]
         robot.adjust_posture(new_position, 0.01)
