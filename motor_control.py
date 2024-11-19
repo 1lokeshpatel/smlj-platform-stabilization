@@ -119,10 +119,6 @@ class MotorControl:
         # Clear syncwrite parameter storage
         self.groupwrite_num.clearParam()
 
-        self.move_motor(self.dxl1_initial_position + angle_to_position(25), 
-                        self.dxl2_initial_position + angle_to_position(25), 
-                        self.dxl3_initial_position + angle_to_position(25))
-
     def move_motor(self, motorPos1, motorPos2, motorPos3=0):
         # Present positions
         dxl1_present_position = 0                                   
@@ -130,9 +126,9 @@ class MotorControl:
         dxl3_present_position = 0
 
         # [motorPos1, motorPos2, motorPos3]
-        dxl_goal_position = [motorPos1, motorPos2]
+        dxl_goal_position = [self.dxl1_initial_position+motorPos1, self.dxl2_initial_position+motorPos2]
         if NUM_MOTORS == 3:
-            dxl_goal_position.append(motorPos3)
+            dxl_goal_position.append(self.dxl3_initial_position+motorPos3)
 
         timeout = 5  # Timeout in seconds
         start_time = time.time()
