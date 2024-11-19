@@ -23,7 +23,7 @@ class Camera:
         # Capture frame from the camera
         ret, frame = self.cap.read()
         print(frame)
-        if not ret:
+        if not frame:
             print("Failed to grab frame.")
             return None
         # Resize frame to desired resolution
