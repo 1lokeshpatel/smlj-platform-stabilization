@@ -107,9 +107,9 @@ class MotorControl:
         self.dxl2_initial_position = dxl2_present_position+5
         self.dxl3_initial_position = dxl3_present_position+5
 
-        self.set_velocity_profile(DXL1_ID, 15)
-        self.set_velocity_profile(DXL2_ID, 15)    
-        self.set_velocity_profile(DXL3_ID, 15)    
+        self.set_velocity_profile(DXL1_ID, 3)
+        self.set_velocity_profile(DXL2_ID, 3)    
+        self.set_velocity_profile(DXL3_ID, 3)    
 
         # Syncwrite control mode
         dxl_comm_result = self.groupwrite_num.txPacket()
