@@ -77,11 +77,11 @@ class MotorControl:
         self.set_extended_position_mode(DXL2_ID)
         self.set_extended_position_mode(DXL3_ID)
 
-        # Enable torque based on the number of motors
-        self.enable_torque(DXL1_ID)
-        self.enable_torque(DXL2_ID)
-        if NUM_MOTORS == 3:
-            self.enable_torque(DXL3_ID)
+        # # Enable torque based on the number of motors
+        # self.enable_torque(DXL1_ID)
+        # self.enable_torque(DXL2_ID)
+        # if NUM_MOTORS == 3:
+        #     self.enable_torque(DXL3_ID)
 
         return True
 
