@@ -35,6 +35,7 @@ class Camera:
 
     def locate_ball(self, image):
         # Convert to HSV color space
+        print(image)
         hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
         # Generate mask based on the yellowish-orange color range
         mask = cv.inRange(hsv_image, self.ball_lower_bound, self.ball_upper_bound)

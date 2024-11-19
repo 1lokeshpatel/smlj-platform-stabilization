@@ -56,4 +56,4 @@ class Robot:
         time.sleep(t)
     
     def set_to_initial_position(self):
-        self.adjust_posture(self.starting_position, 10)
+        self.adjust_posture(self.starting_position, 5)
