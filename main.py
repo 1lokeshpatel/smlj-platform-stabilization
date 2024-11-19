@@ -85,3 +85,4 @@ except Exception as e:
 
 finally:
     robot.deactivate()
+    camera.shutdown_camera()
