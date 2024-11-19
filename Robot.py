@@ -18,9 +18,9 @@ class Robot:
         self.links = [0.05984, 0.1, 0.97, 0.105]
 
         # Initial posture (theta, phi, pz)
-        self.starting_position = [0, 0, 0.09]
+        self.starting_position = [0, 0, 0.015]
         self.max_pz = 0.160
-        self.min_pz = 0.09
+        self.min_pz = 0.0
         self.max_phi = 20
 
     # Method to prepare the robot
@@ -44,10 +44,10 @@ class Robot:
         Pz = position[2]
         Pz = max(self.min_pz, min(Pz, self.max_pz))
 
-        print(f"Pz: {Pz}")
+        #print(f"Pz: {Pz}")
 
         motor_angles = ik2.calculate_motor_angles(theta, phi, Pz)
-        print(motor_angles)
+        #print(motor_angles)
 
         self.ctrl.move_motor(motor_control.angle_to_position(motor_angles[0]),
                                  motor_control.angle_to_position(motor_angles[1]),
@@ -56,4 +56,4 @@ class Robot:
         time.sleep(t)
     
     def set_to_initial_position(self):
-        self.adjust_posture(self.starting_position, 10)
+        self.adjust_posture(self.starting_position, 5)

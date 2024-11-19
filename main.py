@@ -19,6 +19,11 @@ robot = Robot.Robot()
 camera = cv.Camera()
 pid = pid_control.PID(K_PID, k, a)
 
+frame = None
+x = None
+y = None
+area = None
+
 # # motor test
 # try:
 #     if not ctrl.setup():
@@ -49,7 +54,7 @@ def get_cam_feed():
         frame = camera.capture_image()
         if frame is None:
             break  # Stop if frame capture fails
-        
+
         x, y, area = camera.locate_ball(frame)
 
         # Optional: print the ball's coordinates and area
@@ -59,21 +64,38 @@ def get_cam_feed():
 
         camera.display_video(frame)
 
+        time.sleep(0)
+
+def find_ball():
+    global x, y, area
+    while(True):
+        x, y, area = camera.locate_ball(frame)
+
+        # Optional: print the ball's coordinates and area
+        if area > 0:
+            print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
+            print("Finding ball")
+        camera.display_video(frame)
+
 try:
     robot.set_to_initial_position()
 
-    # cam_thread = threading.Thread(target=get_cam_feed)
+    cam_thread = threading.Thread(target=get_cam_feed)
+    #find_ball_thread = threading.Thread(target=find_ball)
 
-    # cam_thread.start()
+    cam_thread.start()
+    #find_ball_thread.start()
 
-    # while(True):
-    #     Current_value = [x, y, area]
+    while(True):
+        print("Main loop running")
+        Current_value = [x, y, area]
 
-    #     if x != -1:
-    #         theta, phi = pid.calc(goal, Current_value)
+        if x != -1:
+            theta, phi = pid.calc(goal, Current_value)
+            print(f"Theta: {theta}, Phi: {phi}")
 
-    #     new_position = [0, 0, robot.starting_position[2]]
-    #     robot.adjust_posture(new_position, 0.01)
+        new_position = [theta, phi, robot.starting_position[2]]
+        robot.adjust_posture(new_position, 0.01)
 
 except Exception as e:
     print(f"An error occurred: {e}")
