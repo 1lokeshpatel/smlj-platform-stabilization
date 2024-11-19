@@ -62,16 +62,13 @@ def get_cam_feed():
     print("Camera running")
 
 try:
-    # robot.set_to_initial_position()
+    robot.set_to_initial_position()
 
     cam_thread = threading.Thread(target=get_cam_feed)
 
     cam_thread.start()
 
-    print("Started thread")
-
     while(True):
-        print("Running main loop")
         Current_value = [x, y, area]
 
         if x != -1:
