@@ -73,15 +73,17 @@ try:
 
     #cam_thread.start()
 
-    while(True):
-        print("Main loop running")
-        Current_value = [x, y, area]
+    #while(True):
 
-        if x != -1:
-            theta, phi = pid.calc(goal, Current_value)
+        # Current_value = [x, y, area]
 
-        new_position = [theta, phi, robot.starting_position[2]]
-        robot.adjust_posture(new_position, 0.01)
+        # if x != -1:
+        #     theta, phi = pid.calc(goal, Current_value)
+
+    theta, phi = 0
+
+    new_position = [theta, phi, robot.starting_position[2]]
+    robot.adjust_posture(new_position, 0.01)
 
 except Exception as e:
     print(f"An error occurred: {e}")
