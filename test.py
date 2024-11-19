@@ -8,9 +8,9 @@ ctrl = motor_control.MotorControl()
 
 # motor test
 try:
-    # if not ctrl.setup():
-    #     print("Motor setup failed. Exiting...")
-    #     quit()
+    if not ctrl.setup():
+        print("Motor setup failed. Exiting...")
+        quit()
 
     while(1):
         ctrl.read_status()
