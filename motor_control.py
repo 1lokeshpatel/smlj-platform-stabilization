@@ -282,7 +282,7 @@ class MotorControl:
             return False
 
         # Clear syncwrite parameter storage
-        self.groupwrite.clearParam()
+        self.groupwrite_num.clearParam()
         print("Extended Position Control Mode set successfully for all motors.")
         return True
 
