@@ -250,7 +250,7 @@ class MotorControl:
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 
     def set_velocity_profile(self, motor_id, velocity):
-        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, motor_id, ADDR_PROFILE_VEL, velocity)
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, motor_id, ADDR_PROFILE_VEL, velocity)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
