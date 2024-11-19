@@ -52,7 +52,6 @@ def get_cam_feed():
     while(True):
         # Capture and process each frame
         frame = camera.capture_image()
-        print(frame)
         if frame is None:
             break  # Stop if frame capture fails
         camera.display_video(frame)
