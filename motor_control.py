@@ -78,6 +78,8 @@ class MotorControl:
         self.enable_torque(DXL2_ID)
         if NUM_MOTORS == 3:
             self.enable_torque(DXL3_ID)
+        
+        self.calibrate()
 
         return True
 
