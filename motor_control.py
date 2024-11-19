@@ -7,13 +7,13 @@ import time
 from dynamixel_sdk import *
 
 # Control table address - specifically for XM430-W210
+ADDR_OPERATING_MODE     = 11
 ADDR_MAX_POSITION_LIMIT = 48
 ADDR_MIN_POSITION_LIMIT = 52
 ADDR_TORQUE_ENABLE      = 64
+ADDR_PROFILE_VEL        = 112
 ADDR_GOAL_POSITION      = 116
 ADDR_PRESENT_POSITION   = 132
-ADDR_OPERATING_MODE     = 11
-ADDR_PROFILE_VEL        = 112
 
 # Data Byte Length
 LEN_GOAL_POSITION       = 4
@@ -73,6 +73,10 @@ class MotorControl:
             print("Failed to set baudrate")
             return False
 
+        self.set_extended_position_mode(DXL1_ID)
+        self.set_extended_position_mode(DXL2_ID)
+        self.set_extended_position_mode(DXL3_ID)
+
         # Enable torque based on the number of motors
         self.enable_torque(DXL1_ID)
         self.enable_torque(DXL2_ID)
@@ -110,10 +114,6 @@ class MotorControl:
         self.set_velocity_profile(DXL1_ID, 6)
         self.set_velocity_profile(DXL2_ID, 6)    
         self.set_velocity_profile(DXL3_ID, 6)    
-
-        self.set_extended_position_mode(DXL1_ID)
-        self.set_extended_position_mode(DXL2_ID)
-        self.set_extended_position_mode(DXL3_ID)
 
     def move_motor(self, motorPos1, motorPos2, motorPos3=0):
 
