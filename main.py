@@ -81,7 +81,7 @@ try:
             theta, phi = pid.calc(goal, Current_value)
 
         new_position = [theta, phi, robot.starting_position[2]]
-        robot.adjust_posture(new_position, 0.01)
+        #robot.adjust_posture(new_position, 0.01)
 
 except Exception as e:
     print(f"An error occurred: {e}")
