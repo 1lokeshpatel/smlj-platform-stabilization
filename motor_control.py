@@ -117,6 +117,9 @@ class MotorControl:
 
     def move_motor(self, motorPos1, motorPos2, motorPos3=0):
 
+        motorPos1 = self.dxl1_initial_position + motorPos1
+        motorPos2 = self.dxl2_initial_position + motorPos2
+        motorPos3 = self.dxl3_initial_position + motorPos3
         # Check motor1 limits
         if (motorPos1 < self.dxl1_initial_position or 
             motorPos1 > self.dxl1_initial_position + angle_to_position(85)):
@@ -139,9 +142,9 @@ class MotorControl:
         dxl3_present_position = 0
 
         # [motorPos1, motorPos2, motorPos3]
-        dxl_goal_position = [self.dxl1_initial_position+motorPos1, self.dxl2_initial_position+motorPos2]
+        dxl_goal_position = [motorPos1, motorPos2]
         if NUM_MOTORS == 3:
-            dxl_goal_position.append(self.dxl3_initial_position+motorPos3)
+            dxl_goal_position.append(motorPos3)
 
         timeout = 5  # Timeout in seconds
         start_time = time.time()
