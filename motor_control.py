@@ -270,13 +270,13 @@ class MotorControl:
             param_operating_mode = [EXTENDED_POSITION_CONTROL_MODE]
 
             # Add the parameter for the current motor ID to the GroupSyncWrite
-            add_param_result = self.groupwrite.addParam(dxl_id, param_operating_mode)
+            add_param_result = self.groupwrite_num.addParam(dxl_id, param_operating_mode)
             if not add_param_result:
                 print(f"Failed to add parameter for Dynamixel ID {dxl_id}")
                 return False
 
         # Syncwrite control mode
-        dxl_comm_result = self.groupwrite.txPacket()
+        dxl_comm_result = self.groupwrite_num.txPacket()
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
             return False
