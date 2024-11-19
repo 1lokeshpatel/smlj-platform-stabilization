@@ -22,6 +22,7 @@ class Camera:
     def capture_image(self):
         # Capture frame from the camera
         ret, frame = self.cap.read()
+        print(frame)
         if not ret:
             print("Failed to grab frame.")
             return None
