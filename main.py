@@ -62,9 +62,9 @@ def get_cam_feed():
 try:
     robot.set_to_initial_position()
 
-    # cam_thread = threading.Thread(target=get_cam_feed)
+    cam_thread = threading.Thread(target=get_cam_feed)
 
-    # cam_thread.start()
+    cam_thread.start()
 
     # while(True):
     #     Current_value = [x, y, area]
