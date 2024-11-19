@@ -12,7 +12,7 @@ try:
         print("Motor setup failed. Exiting...")
         quit()
 
-    ctrl.read_velocity()
+    ctrl.calibrate()
 
 
 except Exception as e:
