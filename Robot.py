@@ -43,7 +43,7 @@ class Robot:
         Pz = position[2]
         Pz = max(self.min_pz, min(Pz, self.max_pz))
 
-        motor_angles = ik2.calculate_motor_angles(theta, phi)
+        motor_angles = ik2.calculate_motor_angles(theta, phi, Pz)
 
         self.ctrl.move_motor(motor_control.angle_to_position(motor_angles[0]),
                                  motor_control.angle_to_position(motor_angles[1]),
@@ -52,4 +52,5 @@ class Robot:
         time.sleep(t)
     
     def set_to_initial_position(self):
+        self.ctrl.calibrate()
         self.adjust_posture(self.starting_position, 10)

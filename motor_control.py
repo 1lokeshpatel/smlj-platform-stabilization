@@ -109,11 +109,7 @@ class MotorControl:
 
         self.set_velocity_profile(DXL1_ID, 3)
         self.set_velocity_profile(DXL2_ID, 3)    
-        self.set_velocity_profile(DXL3_ID, 3)    
-
-        self.move_motor(angle_to_position(25), 
-                        angle_to_position(25), 
-                        angle_to_position(25))
+        self.set_velocity_profile(DXL3_ID, 3)
 
         # # Syncwrite control mode
         # dxl_comm_result = self.groupwrite_num.txPacket()

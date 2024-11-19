@@ -3,14 +3,15 @@ import numpy as np
 deg_to_rad = np.pi / 180.0
 rad_to_deg = 180.0 / np.pi
 
-def calculate_motor_angles(theta, phi):
+def calculate_motor_angles(theta, phi, target_height):
     # Define constants in the mechanical design
     theta_rad = theta * deg_to_rad
     phi_rad = phi * deg_to_rad
     lower_shaft_length = 100 # millimeters
     upper_shaft_length = 97.5
     motor_angle_offset = 0.0 # degrees
-    target_height = 100
+    # target_height = 100
+    target_height *= 1000
     initial_height = 82.05
 
     # Target position vector (base frame)
@@ -82,4 +83,4 @@ def calculate_motor_angles(theta, phi):
 
     return motor_angles
 
-print(calculate_motor_angles(6,20))
+# print(calculate_motor_angles(0,0, 0.09))
