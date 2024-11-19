@@ -70,10 +70,10 @@ def find_ball():
 try:
     robot.set_to_initial_position()
 
-    frame = camera.capture_image()
-    if frame is None:
-        print("failed")
-    camera.display_video(frame)
+    # frame = camera.capture_image()
+    # if frame is None:
+    #     print("failed")
+    # camera.display_video(frame)
 
     cam_thread = threading.Thread(target=get_cam_feed)
     # time.sleep(1)
@@ -82,15 +82,15 @@ try:
     cam_thread.start()
     # find_ball_thread.start()
 
-    # while(True):
-    #     Current_value = [x, y, area]
+    while(True):
+        Current_value = [x, y, area]
 
-    #     if x != -1:
-    #         theta, phi = pid.calc(goal, Current_value)
-    #         print(f"Theta: {theta}, Phi: {phi}")
+        if x != -1:
+            theta, phi = pid.calc(goal, Current_value)
+            print(f"Theta: {theta}, Phi: {phi}")
 
-    #     new_position = [0, 0, robot.starting_position[2]]
-    #     robot.adjust_posture(new_position, 0.01)
+        new_position = [0, 0, robot.starting_position[2]]
+        robot.adjust_posture(new_position, 0.01)
 
 except Exception as e:
     print(f"An error occurred: {e}")
