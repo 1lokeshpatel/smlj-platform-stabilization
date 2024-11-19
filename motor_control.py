@@ -111,7 +111,9 @@ class MotorControl:
         self.set_velocity_profile(DXL2_ID, 3)    
         self.set_velocity_profile(DXL3_ID, 3)    
 
-        self.move_motor(angle_to_position(25), angle_to_position(25), angle_to_position(25))
+        self.move_motor(angle_to_position(25), 
+                        angle_to_position(25), 
+                        angle_to_position(25))
 
         # # Syncwrite control mode
         # dxl_comm_result = self.groupwrite_num.txPacket()
@@ -180,14 +182,14 @@ class MotorControl:
             # Print present and goal positions
             if NUM_MOTORS == 2:
                 print(
-                    f"[ID:{DXL1_ID:03d}] GoalPos:{dxl_goal_position[DXL1_ID-1]:04d}  PresPos:{dxl1_present_position:04d}\t"
-                    f"[ID:{DXL2_ID:03d}] GoalPos:{dxl_goal_position[DXL2_ID-1]:04d}  PresPos:{dxl2_present_position:04d}"
+                    f"[ID:{DXL1_ID:03d}] GoalPos:{((dxl_goal_position[DXL1_ID-1]*360)/4095):04d}  PresPos:{((dxl1_present_position*360)/4095):04d}\t"
+                    f"[ID:{DXL2_ID:03d}] GoalPos:{((dxl_goal_position[DXL2_ID-1]*360)/4095):04d}  PresPos:{((dxl2_present_position*360)/4095):04d}"
                 )
             elif NUM_MOTORS == 3:
                 print(
-                    f"[ID:{DXL1_ID:03d}] GoalPos:{dxl_goal_position[DXL1_ID-1]:04d}  PresPos:{dxl1_present_position:04d}\t"
-                    f"[ID:{DXL2_ID:03d}] GoalPos:{dxl_goal_position[DXL2_ID-1]:04d}  PresPos:{dxl2_present_position:04d}\t"
-                    f"[ID:{DXL3_ID:03d}] GoalPos:{dxl_goal_position[DXL3_ID-1]:04d}  PresPos:{dxl3_present_position:04d}"
+                    f"[ID:{DXL1_ID:03d}] GoalPos:{((dxl_goal_position[DXL1_ID-1]*360)/4095):04d}  PresPos:{((dxl1_present_position*360)/4095):04d}\t"
+                    f"[ID:{DXL2_ID:03d}] GoalPos:{((dxl_goal_position[DXL2_ID-1]*360)/4095):04d}  PresPos:{((dxl2_present_position*360)/4095):04d}\t"
+                    f"[ID:{DXL3_ID:03d}] GoalPos:{((dxl_goal_position[DXL3_ID-1]*360)/4095):04d}  PresPos:{((dxl3_present_position*360)/4095):04d}"
                 )
 
             # Check if motors have reached the goal position
