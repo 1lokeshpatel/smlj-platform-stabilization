@@ -12,7 +12,8 @@ ADDR_MIN_POSITION_LIMIT = 52
 ADDR_TORQUE_ENABLE      = 64
 ADDR_GOAL_POSITION      = 116
 ADDR_PRESENT_POSITION   = 132
-ADDR_OPERATING_MODE = 11
+ADDR_OPERATING_MODE     = 11
+ADDR_PROFILE_VEL        = 112
 
 # Data Byte Length
 LEN_GOAL_POSITION       = 4
@@ -78,6 +79,50 @@ class MotorControl:
             self.enable_torque(DXL3_ID)
 
         return True
+
+    # homing procedure - read current pos values, set initial pos, set velocity profile, move robot to start pos
+    def calibrate(self):
+
+        # Syncread present position
+        dxl_comm_result = self.groupread_num.txRxPacket()
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+
+        # Check if groupsyncread data of Dynamixels are available
+        for dxl_id in [DXL1_ID, DXL2_ID] if NUM_MOTORS == 2 else [DXL1_ID, DXL2_ID, DXL3_ID]:
+            if not self.groupread_num.isAvailable(dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION):
+                print(f"[ID:{dxl_id:03d}] groupSyncRead getdata failed")
+                quit()
+
+        # Get present position values
+        dxl1_present_position = self.groupread_num.getData(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+        dxl2_present_position = self.groupread_num.getData(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+        if NUM_MOTORS == 3:
+            dxl3_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+
+        # currently motors will be in a state that is in contact with base,
+        # adding small increment to ensure initial position is slightly above contact point
+        self.dxl1_initial_position = dxl1_present_position+5
+        self.dxl2_initial_position = dxl2_present_position+5
+        self.dxl3_initial_position = dxl3_present_position+5
+
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, DXL1_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+        # Syncwrite control mode
+        dxl_comm_result = self.groupwrite_num.txPacket()
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+
+        # Clear syncwrite parameter storage
+        self.groupwrite_num.clearParam()
+
+        self.move_motor(self.dxl1_initial_position + angle_to_position(10), 
+                        self.dxl2_initial_position + angle_to_position(10), 
+                        self.dxl3_initial_position + angle_to_position(10))
 
     def move_motor(self, motorPos1, motorPos2, motorPos3=0):
         # Present positions
@@ -198,6 +243,20 @@ class MotorControl:
         elif dxl_error != 0:
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 
+    def set_control_mode(self, motor_id, control_mode):
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, motor_id, ADDR_OPERATING_MODE, control_mode)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+    def set_velocity_profile(self, motor_id, velocity):
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, motor_id, ADDR_PROFILE_VEL, velocity)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
     def read_status(self):
         # Syncread present position
         dxl_comm_result = self.groupread_num.txRxPacket()
@@ -227,6 +286,31 @@ class MotorControl:
                 f"[ID:{DXL1_ID:03d}] PresPos:{(dxl1_present_position*360)/4095:04f}\t"
                 f"[ID:{DXL2_ID:03d}] PresPos:{(dxl2_present_position*360)/4095:04f}\t"
                 f"[ID:{DXL3_ID:03d}] PresPos:{(dxl3_present_position*360)/4095:04f}"
+            )
+
+    def read_velocity(self):
+        # Syncread present position
+        dxl_comm_result = self.groupread_num.txRxPacket()
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+
+        # Get velocity values
+        dxl1_vel = self.groupread_num.getData(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+        dxl2_vel = self.groupread_num.getData(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+        if NUM_MOTORS == 3:
+            dxl3_vel = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+        
+        # Print velocity profile
+        if NUM_MOTORS == 2:
+            print(
+                f"[ID:{DXL1_ID:03d}] Velocity:{dxl1_vel:04d}\t"
+                f"[ID:{DXL2_ID:03d}] Velocity:{dxl2_vel:04d}"
+            )
+        elif NUM_MOTORS == 3:
+            print(
+                f"[ID:{DXL1_ID:03d}] Velocity:{(dxl1_vel*360)/4095:04f}\t"
+                f"[ID:{DXL2_ID:03d}] Velocity:{(dxl2_vel*360)/4095:04f}\t"
+                f"[ID:{DXL3_ID:03d}] Velocity:{(dxl3_vel*360)/4095:04f}"
             )
 
 # Convert angle to Dynamixel position (0-4095 range)
