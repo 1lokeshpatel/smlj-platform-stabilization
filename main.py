@@ -65,7 +65,7 @@ try:
     camera = cv.Camera()
     pid = pid_control.PID(K_PID, k, a)
 
-    robot.set_to_initial_position()
+    # robot.set_to_initial_position()
 
     cam_thread = threading.Thread(target=get_cam_feed)
     find_ball_thread = threading.Thread(target=find_ball)
