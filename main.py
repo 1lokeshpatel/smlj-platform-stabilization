@@ -55,6 +55,7 @@ def get_cam_feed():
         if frame is None:
             break  # Stop if frame capture fails
         camera.display_video(frame)
+        print("True")
 
 def find_ball():
     global x, y, area
