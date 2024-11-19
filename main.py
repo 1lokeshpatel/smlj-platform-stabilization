@@ -61,6 +61,7 @@ def find_ball():
     #     camera.display_video(frame)
 
 try:
+    print("Begins")
     robot = Robot.Robot()
     camera = cv.Camera()
     pid = pid_control.PID(K_PID, k, a)
@@ -69,6 +70,8 @@ try:
 
     cam_thread = threading.Thread(target=get_cam_feed)
     find_ball_thread = threading.Thread(target=find_ball)
+
+    print("Started threads")
 
     cam_thread.start()
     find_ball_thread.start()
