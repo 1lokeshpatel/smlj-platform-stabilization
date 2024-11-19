@@ -61,29 +61,3 @@ class Camera:
         # Release camera and close windows
         self.cap.release()
         cv.destroyAllWindows()
-
-# Instantiate and run the camera
-camera = Camera()
-
-try:
-    while True:
-        # Capture and process each frame
-        frame = camera.capture_image()
-        if frame is None:
-            break  # Stop if frame capture fails
-
-        # Locate ball and display the frame
-        x, y, area = camera.locate_ball(frame)
-        camera.display_video(frame)
-
-        # Optional: print the ball's coordinates and area
-        if area > 0:
-            print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
-
-        # Exit on pressing 'q'
-        if cv.waitKey(1) & 0xFF == ord('q'):
-            break
-
-finally:
-    # Ensure resources are released
-    camera.shutdown_camera()
