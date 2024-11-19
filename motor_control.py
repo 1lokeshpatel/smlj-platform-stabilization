@@ -29,6 +29,7 @@ DXL2_ID                     = 2                             # Dynamixel ID: 2
 DXL3_ID                     = 3                             # Dynamixel ID: 3
 BAUDRATE                    = 57600
 DEVICENAME                  = "/dev/ttyUSB0"                # TODO: Check which port is being used on RPI
+MOTOR_VEL                   = 24                            # 1 = 0.229 rev/min = 1.374 degrees/s
 
 TORQUE_ENABLE               = 1                             # Value for enabling the torque
 TORQUE_DISABLE              = 0                             # Value for disabling the torque
@@ -111,9 +112,10 @@ class MotorControl:
         self.dxl2_initial_position = dxl2_present_position+5
         self.dxl3_initial_position = dxl3_present_position+5
 
-        self.set_velocity_profile(DXL1_ID, 24)
-        self.set_velocity_profile(DXL2_ID, 24)    
-        self.set_velocity_profile(DXL3_ID, 24)    
+        #setting mtor speed
+        self.set_velocity_profile(DXL1_ID, MOTOR_VEL)
+        self.set_velocity_profile(DXL2_ID, MOTOR_VEL)    
+        self.set_velocity_profile(DXL3_ID, MOTOR_VEL)    
 
     def move_motor(self, motorPos1, motorPos2, motorPos3=0):
 
