@@ -44,10 +44,10 @@ class Robot:
         Pz = position[2]
         Pz = max(self.min_pz, min(Pz, self.max_pz))
 
-        print(f"Pz: {Pz}")
+        #print(f"Pz: {Pz}")
 
         motor_angles = ik2.calculate_motor_angles(theta, phi, Pz)
-        print(motor_angles)
+        #print(motor_angles)
 
         self.ctrl.move_motor(motor_control.angle_to_position(motor_angles[0]),
                                  motor_control.angle_to_position(motor_angles[1]),
