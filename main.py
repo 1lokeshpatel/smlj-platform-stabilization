@@ -58,8 +58,6 @@ def get_cam_feed():
             print("Finding ball")
 
         camera.display_video(frame)
-    
-    print("Camera running")
 
 try:
     robot.set_to_initial_position()
