@@ -16,15 +16,16 @@ def calculate_motor_angles(theta, phi):
     # Target position vector (base frame)
     target_position = np.array([0.0, 0.0, target_height])
 
-    platform_vector_motor_1 = np.array([300.0, 0.0, initial_height])
-    platform_vector_motor_2 = np.array([-150.0, 300.0 * np.cos(30 * deg_to_rad), initial_height])
-    platform_vector_motor_3 = np.array([-150.0, -300.0 * np.cos(30 * deg_to_rad), initial_height])
+    platform_radius = 150.0 # millimeters
+    platform_vector_motor_1 = np.array([platform_radius, 0.0, initial_height])
+    platform_vector_motor_2 = np.array([-platform_radius / 2.0, platform_radius * np.cos(30 * deg_to_rad), initial_height])
+    platform_vector_motor_3 = np.array([-platform_radius / 2.0, -platform_radius * np.cos(30 * deg_to_rad), initial_height])
     platform_points = np.array([platform_vector_motor_1, platform_vector_motor_2, platform_vector_motor_3])
 
-
-    base_vector_motor_1 = np.array([202.7, 0.0, 0.0])
-    base_vector_motor_2 = np.array([-202.7 * np.sin(30 * deg_to_rad), 202.7 * np.cos(30 * deg_to_rad), 0.0])
-    base_vector_motor_3 = np.array([-202.7 * np.sin(30 * deg_to_rad), -202.7 * np.cos(30 * deg_to_rad), 0.0])
+    base_radius = 101.35 # millimeters
+    base_vector_motor_1 = np.array([base_radius, 0.0, 0.0])
+    base_vector_motor_2 = np.array([-base_radius * np.sin(30 * deg_to_rad), base_radius * np.cos(30 * deg_to_rad), 0.0])
+    base_vector_motor_3 = np.array([-base_radius * np.sin(30 * deg_to_rad), -base_radius * np.cos(30 * deg_to_rad), 0.0])
     base_points = np.array([base_vector_motor_1, base_vector_motor_2, base_vector_motor_3])
 
     # k_platform = 300.0
