@@ -18,6 +18,7 @@ ADDR_PROFILE_VEL        = 112
 # Data Byte Length
 LEN_GOAL_POSITION       = 4
 LEN_PRESENT_POSITION    = 4
+LEN_PROFILE_VELOCITY    = 4
 
 # Protocol version
 PROTOCOL_VERSION            = 2                             
@@ -295,10 +296,10 @@ class MotorControl:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
 
         # Get velocity values
-        dxl1_vel = self.groupread_num.getData(DXL1_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-        dxl2_vel = self.groupread_num.getData(DXL2_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+        dxl1_vel = self.groupread_num.getData(DXL1_ID, ADDR_PROFILE_VEL, LEN_PROFILE_VELOCITY)
+        dxl2_vel = self.groupread_num.getData(DXL2_ID, ADDR_PROFILE_VEL, LEN_PROFILE_VELOCITY)
         if NUM_MOTORS == 3:
-            dxl3_vel = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+            dxl3_vel = self.groupread_num.getData(DXL3_ID, ADDR_PROFILE_VEL, LEN_PROFILE_VELOCITY)
         
         # Print velocity profile
         if NUM_MOTORS == 2:
