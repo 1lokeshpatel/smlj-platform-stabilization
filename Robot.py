@@ -21,7 +21,8 @@ class Robot:
         self.starting_position = [0, 0, 0.015]
         self.max_pz = 0.160
         self.min_pz = 0.0
-        self.max_phi = 20
+        self.max_phi = 40
+        self.wait_time = 3 #seconds
 
     # Method to prepare the robot
     def activate(self):
@@ -56,4 +57,4 @@ class Robot:
         time.sleep(t)
     
     def set_to_initial_position(self):
-        self.adjust_posture(self.starting_position, 5)
+        self.adjust_posture(self.starting_position, self.wait_time)
