@@ -18,7 +18,7 @@ class Robot:
         self.links = [0.05984, 0.1, 0.97, 0.105]
 
         # Initial posture (theta, phi, pz)
-        self.starting_position = [0, 0, 0.03]
+        self.starting_position = [0, 0, 0.09]
         self.max_pz = 0.160
         self.min_pz = 0.09
         self.max_phi = 20
@@ -35,7 +35,7 @@ class Robot:
         self.ctrl.shutdown()
         print("Shutdown complete.")
 
-    # Method to achieve posture (theta, phi, Pz) within time t
+    # Method to achieve posture (theta, phi, Pz)
     def adjust_posture(self, position, t):
         theta = position[0]
         phi = position[1]
