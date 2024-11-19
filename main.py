@@ -48,6 +48,7 @@ area = None
 #     ctrl.shutdown()
 #     print("Shutdown complete.")
 def get_cam_feed():
+    global frame
     while(True):
         # Capture and process each frame
         frame = camera.capture_image()
@@ -55,6 +56,7 @@ def get_cam_feed():
             break  # Stop if frame capture fails
 
 def find_ball():
+    global x, y, area
     while(True):
         x, y, area = camera.locate_ball(frame)
 
