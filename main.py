@@ -54,7 +54,7 @@ try:
 
         # Locate ball and display the frame
         x, y, area = camera.locate_ball(frame)
-        camera.display_video(frame)
+        # camera.display_video(frame)
 
         # Optional: print the ball's coordinates and area
         if area > 0:
