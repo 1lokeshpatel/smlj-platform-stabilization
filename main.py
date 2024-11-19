@@ -94,7 +94,7 @@ try:
             theta, phi = pid.calc(goal, Current_value)
             print(f"Theta: {theta}, Phi: {phi}")
 
-        new_position = [0, 0, robot.starting_position[2]]
+        new_position = [theta, phi, robot.starting_position[2]]
         robot.adjust_posture(new_position, 0.01)
 
 except Exception as e:
