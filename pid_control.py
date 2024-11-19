@@ -43,7 +43,7 @@ class PID:
         if theta < 0:
             theta += 360
 
-        phi = self.k * math.sqrt(x**2, y**2)
+        phi = self.k * math.sqrt(x**2 + y**2)
 
         self.prev_err_x = curr_err_x
         self.prev_err_y = curr_err_y

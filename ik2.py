@@ -73,7 +73,6 @@ def calculate_motor_angles(theta, phi, target_height):
         # Limit length to prevent overactuation
         # length = np.min([np.max([length, some_max_value]), some_min_value])
         intermed = ((length**2) + (lower_shaft_length**2) - (upper_shaft_length**2)) / (2 * lower_shaft_length * length)
-        print(intermed)
         intermed = np.clip(intermed, -1.0, 1.0) # Ensure within domain for acos
         angle = -rad_to_deg * np.arccos(intermed) + 90.0 + motor_angle_offset
         return angle
