@@ -13,6 +13,7 @@ try:
         quit()
 
     ctrl.calibrate()
+    time.sleep(15)
 
 
 except Exception as e:

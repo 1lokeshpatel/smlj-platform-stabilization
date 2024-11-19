@@ -119,9 +119,9 @@ class MotorControl:
         # Clear syncwrite parameter storage
         self.groupwrite_num.clearParam()
 
-        self.move_motor(self.dxl1_initial_position + angle_to_position(10), 
-                        self.dxl2_initial_position + angle_to_position(10), 
-                        self.dxl3_initial_position + angle_to_position(10))
+        self.move_motor(self.dxl1_initial_position + angle_to_position(25), 
+                        self.dxl2_initial_position + angle_to_position(25), 
+                        self.dxl3_initial_position + angle_to_position(25))
 
     def move_motor(self, motorPos1, motorPos2, motorPos3=0):
         # Present positions
