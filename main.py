@@ -62,7 +62,7 @@ def get_cam_feed():
             print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
             print("Finding ball")
         camera.display_video(frame)
-        time.sleep(1)
+        time.sleep(0.01)
 
 def find_ball():
     global x, y, area
