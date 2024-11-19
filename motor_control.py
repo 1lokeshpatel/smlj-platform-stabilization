@@ -78,8 +78,6 @@ class MotorControl:
         self.enable_torque(DXL2_ID)
         if NUM_MOTORS == 3:
             self.enable_torque(DXL3_ID)
-        
-        self.calibrate()
 
         return True
 
@@ -111,15 +109,9 @@ class MotorControl:
 
         self.set_velocity_profile(DXL1_ID, 3)
         self.set_velocity_profile(DXL2_ID, 3)    
-        self.set_velocity_profile(DXL3_ID, 3)
+        self.set_velocity_profile(DXL3_ID, 3)    
 
-        # # Syncwrite control mode
-        # dxl_comm_result = self.groupwrite_num.txPacket()
-        # if dxl_comm_result != COMM_SUCCESS:
-        #     print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
-
-        # # Clear syncwrite parameter storage
-        # self.groupwrite_num.clearParam()
+        self.set_extended_position_mode([DXL1_ID, DXL2_ID, DXL3_ID])
 
     def move_motor(self, motorPos1, motorPos2, motorPos3=0):
         # Present positions
@@ -253,6 +245,29 @@ class MotorControl:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+    # Adding parameters to syncwrite
+    def set_extended_position_mode(self, motor_ids):
+        for dxl_id in motor_ids:
+            # Create a parameter for Extended Position Mode (1 byte data)
+            param_operating_mode = [EXTENDED_POSITION_CONTROL_MODE]
+
+            # Add the parameter for the current motor ID to the GroupSyncWrite
+            add_param_result = self.groupwrite.addParam(dxl_id, param_operating_mode)
+            if not add_param_result:
+                print(f"Failed to add parameter for Dynamixel ID {dxl_id}")
+                return False
+
+        # Syncwrite control mode
+        dxl_comm_result = self.groupwrite.txPacket()
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+            return False
+
+        # Clear syncwrite parameter storage
+        self.groupwrite.clearParam()
+        print("Extended Position Control Mode set successfully for all motors.")
+        return True
 
     def read_status(self):
         # Syncread present position
