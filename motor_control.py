@@ -111,13 +111,15 @@ class MotorControl:
         self.set_velocity_profile(DXL2_ID, 3)    
         self.set_velocity_profile(DXL3_ID, 3)    
 
-        # Syncwrite control mode
-        dxl_comm_result = self.groupwrite_num.txPacket()
-        if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+        self.move_motor(angle_to_position(25), angle_to_position(25), angle_to_position(25))
 
-        # Clear syncwrite parameter storage
-        self.groupwrite_num.clearParam()
+        # # Syncwrite control mode
+        # dxl_comm_result = self.groupwrite_num.txPacket()
+        # if dxl_comm_result != COMM_SUCCESS:
+        #     print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+
+        # # Clear syncwrite parameter storage
+        # self.groupwrite_num.clearParam()
 
     def move_motor(self, motorPos1, motorPos2, motorPos3=0):
         # Present positions
