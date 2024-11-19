@@ -45,7 +45,7 @@ def get_cam_feed():
         frame = camera.capture_image()
         if frame is None:
             break  # Stop if frame capture fails
-    print("CAM RUNNING")
+    print("Camera running")
 
 def find_ball():
     global x, y, area
@@ -61,7 +61,6 @@ def find_ball():
         camera.display_video(frame)
 
 try:
-    print("Begins")
     robot = Robot.Robot()
     camera = cv.Camera()
     pid = pid_control.PID(K_PID, k, a)
