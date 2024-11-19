@@ -10,7 +10,7 @@ class Robot:
     def __init__(self):
         # Initialize motor control object
         self.ctrl = motor_control.MotorControl()
-        print("INITIALIZE MOTOR CONTROL")
+
         # Prepare motors
         self.activate()
 
@@ -25,11 +25,9 @@ class Robot:
 
     # Method to prepare the robot
     def activate(self):
-        print("ACTIVATE WORKED")
         if not self.ctrl.setup():
             print("Motor setup failed. Exiting...")
             quit()
-        print("ACTIVATE END PART WORKED")
 
     # Method to shut down the robot
     def deactivate(self):
