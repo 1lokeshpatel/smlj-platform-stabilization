@@ -191,18 +191,18 @@ class MotorControl:
             if NUM_MOTORS == 3:
                 dxl3_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
-            # Print present and goal positions
-            if NUM_MOTORS == 2:
-                print(
-                    f"[ID:{DXL1_ID:03d}] GoalPos:{((dxl_goal_position[DXL1_ID-1]*360)/4095):04f}  PresPos:{((dxl1_present_position*360)/4095):04f}\t"
-                    f"[ID:{DXL2_ID:03d}] GoalPos:{((dxl_goal_position[DXL2_ID-1]*360)/4095):04f}  PresPos:{((dxl2_present_position*360)/4095):04f}"
-                )
-            elif NUM_MOTORS == 3:
-                print(
-                    f"[ID:{DXL1_ID:03d}] GoalPos:{((dxl_goal_position[DXL1_ID-1]*360)/4095):04f}  PresPos:{((dxl1_present_position*360)/4095):04f}\t"
-                    f"[ID:{DXL2_ID:03d}] GoalPos:{((dxl_goal_position[DXL2_ID-1]*360)/4095):04f}  PresPos:{((dxl2_present_position*360)/4095):04f}\t"
-                    f"[ID:{DXL3_ID:03d}] GoalPos:{((dxl_goal_position[DXL3_ID-1]*360)/4095):04f}  PresPos:{((dxl3_present_position*360)/4095):04f}"
-                )
+            # # Print present and goal positions
+            # if NUM_MOTORS == 2:
+            #     print(
+            #         f"[ID:{DXL1_ID:03d}] GoalPos:{((dxl_goal_position[DXL1_ID-1]*360)/4095):04f}  PresPos:{((dxl1_present_position*360)/4095):04f}\t"
+            #         f"[ID:{DXL2_ID:03d}] GoalPos:{((dxl_goal_position[DXL2_ID-1]*360)/4095):04f}  PresPos:{((dxl2_present_position*360)/4095):04f}"
+            #     )
+            # elif NUM_MOTORS == 3:
+            #     print(
+            #         f"[ID:{DXL1_ID:03d}] GoalPos:{((dxl_goal_position[DXL1_ID-1]*360)/4095):04f}  PresPos:{((dxl1_present_position*360)/4095):04f}\t"
+            #         f"[ID:{DXL2_ID:03d}] GoalPos:{((dxl_goal_position[DXL2_ID-1]*360)/4095):04f}  PresPos:{((dxl2_present_position*360)/4095):04f}\t"
+            #         f"[ID:{DXL3_ID:03d}] GoalPos:{((dxl_goal_position[DXL3_ID-1]*360)/4095):04f}  PresPos:{((dxl3_present_position*360)/4095):04f}"
+            #     )
 
             # Check if motors have reached the goal position
             if not (
