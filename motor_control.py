@@ -107,13 +107,30 @@ class MotorControl:
         self.dxl2_initial_position = dxl2_present_position+5
         self.dxl3_initial_position = dxl3_present_position+5
 
-        self.set_velocity_profile(DXL1_ID, 3)
-        self.set_velocity_profile(DXL2_ID, 3)    
-        self.set_velocity_profile(DXL3_ID, 3)    
+        self.set_velocity_profile(DXL1_ID, 6)
+        self.set_velocity_profile(DXL2_ID, 6)    
+        self.set_velocity_profile(DXL3_ID, 6)    
 
         self.set_extended_position_mode([DXL1_ID, DXL2_ID, DXL3_ID])
 
     def move_motor(self, motorPos1, motorPos2, motorPos3=0):
+
+        # Check motor1 limits
+        if (motorPos1 < self.dxl1_initial_position or 
+            motorPos1 > self.dxl1_initial_position + angle_to_position(85)):
+            return False
+            
+        # Check motor2 limits
+        if (motorPos2 < self.dxl2_initial_position or 
+            motorPos2 > self.dxl2_initial_position + angle_to_position(85)):
+            return False
+        
+        if NUM_MOTORS == 3:
+            # Check motor3 limits
+            if (motorPos3 < self.dxl3_initial_position or 
+                motorPos3 > self.dxl3_initial_position + angle_to_position(85)):
+                return False
+
         # Present positions
         dxl1_present_position = 0                                   
         dxl2_present_position = 0
