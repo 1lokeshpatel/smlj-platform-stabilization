@@ -15,6 +15,10 @@ y = -1
 area = -1
 goal = [0, 0]
 
+robot = Robot.Robot()
+camera = cv.Camera()
+pid = pid_control.PID(K_PID, k, a)
+
 # # motor test
 # try:
 #     if not ctrl.setup():
@@ -58,10 +62,6 @@ def get_cam_feed():
     print("Camera running")
 
 try:
-    robot = Robot.Robot()
-    camera = cv.Camera()
-    pid = pid_control.PID(K_PID, k, a)
-
     # robot.set_to_initial_position()
 
     cam_thread = threading.Thread(target=get_cam_feed)
