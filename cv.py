@@ -4,9 +4,6 @@ import cv2 as cv
 import numpy as np
 import threading
 
-# Lock for thread safety
-lock = threading.Lock()
-
 class Camera:
     def __init__(self):
         # Initialize video capture

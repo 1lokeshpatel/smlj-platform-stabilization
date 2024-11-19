@@ -39,26 +39,26 @@ goal = [0, 0]
 #     ctrl.shutdown()
 #     print("Shutdown complete.")
 def get_cam_feed():
-    global frame
-    while(True):
-        # Capture and process each frame
-        frame = camera.capture_image()
-        if frame is None:
-            break  # Stop if frame capture fails
-        print("CAM RUNNING")
+    # global frame
+    # while(True):
+    #     # Capture and process each frame
+    #     frame = camera.capture_image()
+    #     if frame is None:
+    #         break  # Stop if frame capture fails
+    print("CAM RUNNING")
 
 def find_ball():
-    global x, y, area
+    # global x, y, area
 
-    while(True):
-        x, y, area = camera.locate_ball(frame)
+    # while(True):
+    #     x, y, area = camera.locate_ball(frame)
 
-        # Optional: print the ball's coordinates and area
-        if area > 0:
-            print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
-        print("Finding ball")
+    #     # Optional: print the ball's coordinates and area
+    #     if area > 0:
+    #         print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
+    print("Finding ball")
 
-        camera.display_video(frame)
+    #     camera.display_video(frame)
 
 try:
     robot = Robot.Robot()
