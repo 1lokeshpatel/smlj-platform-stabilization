@@ -82,7 +82,7 @@ try:
         if x != -1:
             theta, phi = pid.calc(goal, Current_value)
 
-        new_position = [theta, phi, 0.015]
+        new_position = [theta, -phi, 0.015]
         robot.adjust_posture(new_position, 0.01)
 
 except Exception as e:
