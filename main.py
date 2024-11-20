@@ -6,7 +6,9 @@ import time
 import threading
 import numpy as np
 
-K_PID = [0.007, 0.0000, 0.0000]
+# best so far is Kp = 0.7, Ki = 0, Kd = 0.01
+# another is Kp = 0.03, Ki = 0, Kd = 0.01
+K_PID = [0.03, 0.005, 0.01]
 k = 1
 a = 1
 
@@ -58,9 +60,9 @@ def get_cam_feed():
         x, y, area = camera.locate_ball(frame)
 
         # Optional: print the ball's coordinates and area
-        if area > 0:
-            print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
-            print("Finding ball")
+        # if area > 0:
+        #     print(f"Ball located at (x: {x}, y: {y}), Area: {area}")
+        #     print("Finding ball")
 
         camera.display_video(frame)
 
