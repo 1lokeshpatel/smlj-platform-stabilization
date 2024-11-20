@@ -8,7 +8,7 @@ import numpy as np
 
 # best so far is Kp = 0.7, Ki = 0, Kd = 0.01
 # another is Kp = 0.03, Ki = 0, Kd = 0.01
-K_PID = [0.03, 0.005, 0.01]
+K_PID = [0.03, 0, 0.01]
 k = 1
 a = 1
 
@@ -75,18 +75,15 @@ try:
 
     cam_thread.start()
 
+    while(True):
 
+        Current_value = [x, y, area]
 
-        # Current_value = [x, y, area]
+        if x != -1:
+            theta, phi = pid.calc(goal, Current_value)
 
-        # if x != -1:
-        #     theta, phi = pid.calc(goal, Current_value)
-
-    theta = 0
-    phi = 0
-
-    new_position = [theta, phi, 0.015]
-    robot.adjust_posture(new_position, 5)
+        new_position = [theta, phi, 0.015]
+        robot.adjust_posture(new_position, 0.01)
 
 except Exception as e:
     print(f"An error occurred: {e}")
