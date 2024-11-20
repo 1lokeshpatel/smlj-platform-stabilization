@@ -6,9 +6,9 @@ import time
 import threading
 import numpy as np
 
-# best so far is Kp = 0.7, Ki = 0, Kd = 0.01
+# best so far is Kp = 0.07, Ki = 0, Kd = 0.01
 # another is Kp = 0.03, Ki = 0, Kd = 0.01
-K_PID = [0.03, 0, 0.01]
+K_PID = [0.07, 0, 0.01]
 k = 1
 a = 1
 
