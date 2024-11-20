@@ -15,7 +15,7 @@ class Robot:
         self.activate()
 
         # Define link lengths (base, lower link, upper link, ceiling)
-        self.links = [0.05984, 0.1, 0.97, 0.105]
+        self.links = [0.05984, 0.1, 0.097, 0.105]
 
         # Initial posture (theta, phi, pz)
         self.starting_position = [0, 0, 0.015]
