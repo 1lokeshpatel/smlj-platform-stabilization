@@ -7,6 +7,7 @@ class PID:
         self.ki = PID[1]
         self.kd = PID[2]
         self.k = k
+        self.i_decay = 0.99
         self.alpha = alpha
         self.prev_x = 0
         self.prev_y = 0
@@ -45,6 +46,10 @@ class PID:
         # Apply smoothing (low pass filter)
         roll = self.alpha * roll + (1 - self.alpha) * self.prev_x
         pitch = self.alpha * pitch + (1 - self.alpha) * self.prev_y
+
+        #integral decay
+        self.integral_x = self.integral_x * self.i_decay
+        self.integral_y = self.integral_y * self.i_decay
 
         # Roll and pitch represent theta and phi respectively
         theta = roll  # Roll angle
