@@ -2,7 +2,6 @@
 
 import cv2 as cv
 import numpy as np
-import threading
 
 class Camera:
     def __init__(self):
@@ -48,8 +47,10 @@ class Camera:
             (x, y), radius = cv.minEnclosingCircle(largest_contour)
             area = cv.contourArea(largest_contour)  # Calculate contour area
             if area > 200:  # Ignore noise based on area threshold
-                # Draw the circle on the image
-                cv.circle(image, (int(x), int(y)), int(radius), (0, 255, 0), 2)
+                # Draw the enclosing circle on the image (red)
+                cv.circle(image, (int(x), int(y)), int(radius), (0, 0, 255), 2)
+                # Draw a red circle at the center of the ball
+                cv.circle(image, (int(x), int(y)), 5, (0, 0, 255), -1)
                 # Adjust coordinates to center of image
                 x -= self.frame_height / 2
                 y -= self.frame_width / 2
