@@ -23,8 +23,9 @@ a = 1
 x = -1
 y = -1
 area = -1
-center_pixels = [0, 0]
-goal = [0, 0]  # Goal position in image coordinates
+center_pixel_coords = [0, 0]
+center = [0, 0]
+goal = [0, 0]  # Goal position
 
 robot = Robot.Robot()
 camera = cv.Camera()
@@ -46,10 +47,18 @@ def get_cam_feed():
             break  # Stop if frame capture fails
 
         if iterations < 30:
-            center_pixels[0], center_pixels[1] = camera.detect_white_dot(frame)
+            center_pixel_coords[0], center_pixel_coords[1] = camera.detect_white_dot(frame)
+
+        if iterations == 30:
+            center[0] = center_pixel_coords[0] - camera.frame_height / 2
+            center[1] = center_pixel_coords[1] - camera.frame_width / 2
+            center[0], center[1] = -center[1], center[0]
+            center[0] = int(center[0])
+            center[1] = int(center[1])
+            goal = [goal[0] + center[0], goal[1] + center[1]]
 
         # Draw a red dot at the detected white spot
-        cv2.circle(frame, (center_pixels[0], center_pixels[1]), 5, (0, 0, 255), -1)
+        cv2.circle(frame, (center_pixel_coords[0], center_pixel_coords[1]), 5, (0, 0, 255), -1)
 
         x, y, area = camera.locate_ball(frame, goal)
 
