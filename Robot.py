@@ -54,7 +54,7 @@ class Robot:
                                  motor_control.angle_to_position(motor_angles[1]),
                                  motor_control.angle_to_position(motor_angles[2]))
 
-        time.sleep(t)
+        time.sleep(0)
     
     def set_to_initial_position(self):
         self.adjust_posture(self.starting_position, self.wait_time)
