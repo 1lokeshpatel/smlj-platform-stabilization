@@ -48,8 +48,6 @@ def get_cam_feed():
 
         if iterations < 30:
             center_pixel_coords[0], center_pixel_coords[1] = camera.detect_white_dot(frame)
-            iterations += 1
-            continue
 
         if iterations == 30:
             center[0] = center_pixel_coords[0] - camera.frame_height / 2
@@ -57,7 +55,8 @@ def get_cam_feed():
             center[0], center[1] = -center[1], center[0]
             center[0] = int(center[0])
             center[1] = int(center[1])
-            goal = [goal[0] + center[0], goal[1] + center[1]]
+            goal[0] += center[0]
+            goal[1] += center[1]
             print("WORKS")
 
         # Draw a red dot at the detected white spot
