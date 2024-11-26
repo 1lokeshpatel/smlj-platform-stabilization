@@ -38,7 +38,7 @@ def get_cam_feed():
         if frame is None:
             break  # Stop if frame capture fails
 
-        x, y, area = camera.locate_ball(frame)
+        x, y, area = camera.locate_ball(frame, goal)
 
         # Optional: print the ball's coordinates and area
         # if area > 0:

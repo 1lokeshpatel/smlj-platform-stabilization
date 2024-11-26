@@ -32,7 +32,7 @@ class Camera:
         cv.imshow("Live Feed", image)
         cv.waitKey(1)
 
-    def locate_ball(self, image):
+    def locate_ball(self, image, goal):
         # Convert to HSV color space
         hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
         # Generate mask based on the yellowish-orange color range
@@ -51,6 +51,14 @@ class Camera:
                 cv.circle(image, (int(x), int(y)), int(radius), (0, 0, 255), 2)
                 # Draw a red circle at the center of the ball
                 cv.circle(image, (int(x), int(y)), 5, (0, 0, 255), -1)
+
+                # Convert goal to image coordinates
+                goal_x = int(goal[0] + self.frame_width / 2)
+                goal_y = int(goal[1] + self.frame_height / 2)
+
+                # Draw a red line from the center of the ball to the goal position
+                cv.line(image, (int(x), int(y)), (goal_x, goal_y), (0, 0, 255), 2)
+
                 # Adjust coordinates to center of image
                 x -= self.frame_height / 2
                 y -= self.frame_width / 2
