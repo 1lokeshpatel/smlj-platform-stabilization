@@ -56,8 +56,6 @@ class Camera:
             if M["m00"] != 0:
                 white_dot_x = int(M["m10"] / M["m00"])
                 white_dot_y = int(M["m01"] / M["m00"])
-                # Draw a red dot at the detected white spot
-                cv.circle(image, (white_dot_x, white_dot_y), 5, (0, 0, 255), -1)
                 return white_dot_x, white_dot_y
         return None, None
 
