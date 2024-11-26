@@ -48,6 +48,8 @@ def get_cam_feed():
 
         if iterations < 30:
             center_pixel_coords[0], center_pixel_coords[1] = camera.detect_white_dot(frame)
+            iterations += 1
+            continue
 
         if iterations == 30:
             center[0] = center_pixel_coords[0] - camera.frame_height / 2
