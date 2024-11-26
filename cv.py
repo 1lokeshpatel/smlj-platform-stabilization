@@ -81,8 +81,8 @@ class Camera:
 
                 # Convert goal to image coordinates
                 goal_x, goal_y = goal[1], -goal[0]
-                goal_x = int(goal_x + self.frame_height / 2)
-                goal_y = int(goal[1] + self.frame_width / 2)
+                goal_x = int(goal_x + self.frame_width / 2)
+                goal_y = int(goal[1] + self.frame_height / 2)
                 # goal_x = int(goal[0] + self.frame_width / 2)
                 # goal_y = int(goal[1] + self.frame_height / 2)
 
