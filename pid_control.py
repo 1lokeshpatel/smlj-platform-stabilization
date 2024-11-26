@@ -43,8 +43,8 @@ class PID:
         print(f"Y Error: {curr_err_y}   Kp_Y Error: {self.kp * curr_err_y}   Ki_Y Error: {self.ki * self.integral_y}   Kd_Y Error: {self.kd * derivative_y}")
 
         # Apply smoothing (low pass filter)
-        # roll = self.alpha * roll + (1 - self.alpha) * self.prev_x
-        # pitch = self.alpha * pitch + (1 - self.alpha) * self.prev_y
+        roll = self.alpha * roll + (1 - self.alpha) * self.prev_x
+        pitch = self.alpha * pitch + (1 - self.alpha) * self.prev_y
 
         # Roll and pitch represent theta and phi respectively
         theta = roll  # Roll angle
