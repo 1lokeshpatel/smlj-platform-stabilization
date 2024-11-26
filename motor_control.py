@@ -7,13 +7,13 @@ import time
 from dynamixel_sdk import *
 
 # Control table address - specifically for XM430-W210
+ADDR_OPERATING_MODE     = 11
 ADDR_MAX_POSITION_LIMIT = 48
 ADDR_MIN_POSITION_LIMIT = 52
 ADDR_TORQUE_ENABLE      = 64
+ADDR_PROFILE_VEL        = 112
 ADDR_GOAL_POSITION      = 116
 ADDR_PRESENT_POSITION   = 132
-ADDR_OPERATING_MODE     = 11
-ADDR_PROFILE_VEL        = 112
 
 # Data Byte Length
 LEN_GOAL_POSITION       = 4
@@ -29,6 +29,7 @@ DXL2_ID                     = 2                             # Dynamixel ID: 2
 DXL3_ID                     = 3                             # Dynamixel ID: 3
 BAUDRATE                    = 57600
 DEVICENAME                  = "/dev/ttyUSB0"                # TODO: Check which port is being used on RPI
+MOTOR_VEL                   = 24                            # 1 = 0.229 rev/min = 1.374 degrees/s
 
 TORQUE_ENABLE               = 1                             # Value for enabling the torque
 TORQUE_DISABLE              = 0                             # Value for disabling the torque
@@ -73,6 +74,10 @@ class MotorControl:
             print("Failed to set baudrate")
             return False
 
+        self.set_extended_position_mode(DXL1_ID)
+        self.set_extended_position_mode(DXL2_ID)
+        self.set_extended_position_mode(DXL3_ID)
+
         # Enable torque based on the number of motors
         self.enable_torque(DXL1_ID)
         self.enable_torque(DXL2_ID)
@@ -107,32 +112,41 @@ class MotorControl:
         self.dxl2_initial_position = dxl2_present_position+5
         self.dxl3_initial_position = dxl3_present_position+5
 
-        self.set_velocity_profile(DXL1_ID, 3)
-        self.set_velocity_profile(DXL2_ID, 3)    
-        self.set_velocity_profile(DXL3_ID, 3)    
-
-        self.move_motor(angle_to_position(25), 
-                        angle_to_position(25), 
-                        angle_to_position(25))
-
-        # # Syncwrite control mode
-        # dxl_comm_result = self.groupwrite_num.txPacket()
-        # if dxl_comm_result != COMM_SUCCESS:
-        #     print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
-
-        # # Clear syncwrite parameter storage
-        # self.groupwrite_num.clearParam()
+        #setting mtor speed
+        self.set_velocity_profile(DXL1_ID, MOTOR_VEL)
+        self.set_velocity_profile(DXL2_ID, MOTOR_VEL)    
+        self.set_velocity_profile(DXL3_ID, MOTOR_VEL)    
 
     def move_motor(self, motorPos1, motorPos2, motorPos3=0):
+
+        motorPos1 = self.dxl1_initial_position + motorPos1
+        motorPos2 = self.dxl2_initial_position + motorPos2
+        motorPos3 = self.dxl3_initial_position + motorPos3
+        # Check motor1 limits
+        if (motorPos1 < self.dxl1_initial_position or 
+            motorPos1 > self.dxl1_initial_position + angle_to_position(85)):
+            return False
+            
+        # Check motor2 limits
+        if (motorPos2 < self.dxl2_initial_position or 
+            motorPos2 > self.dxl2_initial_position + angle_to_position(85)):
+            return False
+        
+        if NUM_MOTORS == 3:
+            # Check motor3 limits
+            if (motorPos3 < self.dxl3_initial_position or 
+                motorPos3 > self.dxl3_initial_position + angle_to_position(85)):
+                return False
+
         # Present positions
         dxl1_present_position = 0                                   
         dxl2_present_position = 0
         dxl3_present_position = 0
 
         # [motorPos1, motorPos2, motorPos3]
-        dxl_goal_position = [self.dxl1_initial_position+motorPos1, self.dxl2_initial_position+motorPos2]
+        dxl_goal_position = [motorPos1, motorPos2]
         if NUM_MOTORS == 3:
-            dxl_goal_position.append(self.dxl3_initial_position+motorPos3)
+            dxl_goal_position.append(motorPos3)
 
         timeout = 5  # Timeout in seconds
         start_time = time.time()
@@ -179,18 +193,18 @@ class MotorControl:
             if NUM_MOTORS == 3:
                 dxl3_present_position = self.groupread_num.getData(DXL3_ID, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
 
-            # Print present and goal positions
-            if NUM_MOTORS == 2:
-                print(
-                    f"[ID:{DXL1_ID:03d}] GoalPos:{((dxl_goal_position[DXL1_ID-1]*360)/4095):04f}  PresPos:{((dxl1_present_position*360)/4095):04f}\t"
-                    f"[ID:{DXL2_ID:03d}] GoalPos:{((dxl_goal_position[DXL2_ID-1]*360)/4095):04f}  PresPos:{((dxl2_present_position*360)/4095):04f}"
-                )
-            elif NUM_MOTORS == 3:
-                print(
-                    f"[ID:{DXL1_ID:03d}] GoalPos:{((dxl_goal_position[DXL1_ID-1]*360)/4095):04f}  PresPos:{((dxl1_present_position*360)/4095):04f}\t"
-                    f"[ID:{DXL2_ID:03d}] GoalPos:{((dxl_goal_position[DXL2_ID-1]*360)/4095):04f}  PresPos:{((dxl2_present_position*360)/4095):04f}\t"
-                    f"[ID:{DXL3_ID:03d}] GoalPos:{((dxl_goal_position[DXL3_ID-1]*360)/4095):04f}  PresPos:{((dxl3_present_position*360)/4095):04f}"
-                )
+            # # Print present and goal positions
+            # if NUM_MOTORS == 2:
+            #     print(
+            #         f"[ID:{DXL1_ID:03d}] GoalPos:{((dxl_goal_position[DXL1_ID-1]*360)/4095):04f}  PresPos:{((dxl1_present_position*360)/4095):04f}\t"
+            #         f"[ID:{DXL2_ID:03d}] GoalPos:{((dxl_goal_position[DXL2_ID-1]*360)/4095):04f}  PresPos:{((dxl2_present_position*360)/4095):04f}"
+            #     )
+            # elif NUM_MOTORS == 3:
+            #     print(
+            #         f"[ID:{DXL1_ID:03d}] GoalPos:{((dxl_goal_position[DXL1_ID-1]*360)/4095):04f}  PresPos:{((dxl1_present_position*360)/4095):04f}\t"
+            #         f"[ID:{DXL2_ID:03d}] GoalPos:{((dxl_goal_position[DXL2_ID-1]*360)/4095):04f}  PresPos:{((dxl2_present_position*360)/4095):04f}\t"
+            #         f"[ID:{DXL3_ID:03d}] GoalPos:{((dxl_goal_position[DXL3_ID-1]*360)/4095):04f}  PresPos:{((dxl3_present_position*360)/4095):04f}"
+            #     )
 
             # Check if motors have reached the goal position
             if not (
@@ -255,6 +269,19 @@ class MotorControl:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+    def set_extended_position_mode(self, motor_id):
+
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, motor_id, ADDR_OPERATING_MODE, EXTENDED_POSITION_CONTROL_MODE)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+            return False
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+            return False
+
+        print(f"Extended Position Control Mode set successfully for {motor_id:03d}")
+        return True
 
     def read_status(self):
         # Syncread present position
