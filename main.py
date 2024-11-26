@@ -57,11 +57,13 @@ def get_cam_feed():
             center[1] = int(center[1])
             goal[0] += center[0]
             goal[1] += center[1]
+            print(goal)
+            print(center)
 
         # Draw a red dot at the detected white spot
         cv2.circle(frame, (center_pixel_coords[0], center_pixel_coords[1]), 5, (0, 0, 255), -1)
 
-        x, y, area = camera.locate_ball(frame, goal)
+        x, y, area = camera.locate_ball(frame, center_pixel_coords)
 
         # Optional: print the ball's coordinates and area
         # if area > 0:
