@@ -10,7 +10,7 @@ import numpy as np
 # best so far is Kp = 0.07, Ki = 0, Kd = 0.01
 # another is Kp = 0.03, Ki = 0, Kd = 0.01
 # PID parameters
-K_PID = [0.07, 0, 0.04]
+K_PID = [0.07, 0.01, 0.04]
 k = 1
 a = 1
 
