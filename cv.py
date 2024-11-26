@@ -80,8 +80,11 @@ class Camera:
                 cv.circle(image, (int(x), int(y)), 5, (0, 0, 255), -1)
 
                 # Convert goal to image coordinates
-                goal_x = int(goal[0] + self.frame_width / 2)
-                goal_y = int(goal[1] + self.frame_height / 2)
+                goal_x, goal_y = goal[1], -goal[0]
+                goal_x = int(goal_x + self.frame_height / 2)
+                goal_y = int(goal[1] + self.frame_width / 2)
+                # goal_x = int(goal[0] + self.frame_width / 2)
+                # goal_y = int(goal[1] + self.frame_height / 2)
 
                 # Draw a red line from the center of the ball to the goal position
                 cv.line(image, (int(x), int(y)), (goal_x, goal_y), (0, 0, 255), 2)
