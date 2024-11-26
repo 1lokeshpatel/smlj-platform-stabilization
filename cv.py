@@ -32,6 +32,35 @@ class Camera:
         cv.imshow("Live Feed", image)
         cv.waitKey(1)
 
+    def detect_white_dot(self, image):
+        # Convert to grayscale for detecting white dots
+        gray_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        _, white_mask = cv.threshold(gray_image, 200, 255, cv.THRESH_BINARY)
+        white_contours, _ = cv.findContours(white_mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+        if white_contours:
+            # Find the contour closest to the image center
+            center_x, center_y = self.frame_width // 2, self.frame_height // 2
+
+            # Combine proximity to the center and contour size
+            def scoring_function(contour):
+                dist_to_center = cv.pointPolygonTest(contour, (center_x, center_y), True)
+                size_penalty = -cv.contourArea(contour)
+                return dist_to_center + 0.1 * size_penalty
+
+            # Select the best contour based on the scoring function
+            best_contour = max(white_contours, key=scoring_function)
+
+            # Compute the center of the best contour
+            M = cv.moments(best_contour)
+            if M["m00"] != 0:
+                white_dot_x = int(M["m10"] / M["m00"])
+                white_dot_y = int(M["m01"] / M["m00"])
+                # Draw a red dot at the detected white spot
+                cv.circle(image, (white_dot_x, white_dot_y), 5, (0, 0, 255), -1)
+                return white_dot_x, white_dot_y
+        return None, None
+
     def locate_ball(self, image, goal):
         # Convert to HSV color space
         hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
