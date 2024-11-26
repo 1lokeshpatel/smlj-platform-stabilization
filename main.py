@@ -7,13 +7,14 @@ import threading
 import numpy as np
 
 
-# best so far is Kp = 0.07, Ki = 0, Kd = 0.01
-# another is Kp = 0.03, Ki = 0, Kd = 0.01
-# another is Kp = 0.07, Ki = .005, Kd = 0.04
-# Kp 0.07 and 0.08 are good (0.08 better)
-# Kp = 0.08 Ki 0.005 with Kd 0.03
+# Kp = 0.07, Ki = 0, Kd = 0.01
+# Kp = 0.03, Ki = 0, Kd = 0.01
+# Kp = 0.07, Ki = 0.005, Kd = 0.04
+# Kp = 0.07, Ki 0.011, Kd 0.035
+# Kp = 0.08, Ki 0.0, Kd 0.04
+
 # PID parameters
-K_PID = [0.04, 0, 0]
+K_PID = [0.07, 0.011, 0.035]
 k = 1
 a = 1
 
