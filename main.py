@@ -55,6 +55,7 @@ def get_cam_feed():
             center[0], center[1] = -center[1], center[0]
             center[0] = int(center[0])
             center[1] = int(center[1])
+            print(center)
             #goal = [goal[0] + center[0], goal[1] + center[1]]
 
         # Draw a red dot at the detected white spot
