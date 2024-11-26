@@ -12,7 +12,7 @@ import numpy as np
 # PID parameters
 K_PID = [0.07, 0, 0.05]
 k = 1
-a = 0.8
+a = 1.1
 
 # Initialize global variables
 x = -1
