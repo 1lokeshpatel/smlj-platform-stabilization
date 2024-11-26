@@ -39,8 +39,8 @@ class PID:
         roll = self.kp * curr_err_x + self.ki * self.integral_x + self.kd * derivative_x
         pitch = self.kp * curr_err_y + self.ki * self.integral_y + self.kd * derivative_y
 
-        print(f"X Error: {round(curr_err_x)}   Kp_X Error: {round(self.kp * curr_err_x)}   Ki_X Error: {round(self.ki * self.integral_x)}   Kd_X Error: {round(self.kd * derivative_x)}   Roll: {round(roll)}")
-        print(f"Y Error: {round(curr_err_y)}   Kp_Y Error: {round(self.kp * curr_err_y)}   Ki_Y Error: {round(self.ki * self.integral_y)}   Kd_Y Error: {round(self.kd * derivative_y)}   Pitch: {round(pitch)}")
+        print(f"X Error: {round(curr_err_x, 2)}   Kp_X Error: {round(self.kp * curr_err_x, 2)}   Ki_X Error: {round(self.ki * self.integral_x, 2)}   Kd_X Error: {round(self.kd * derivative_x, 2)}   Roll: {round(roll, 2)}")
+        print(f"Y Error: {round(curr_err_y, 2)}   Kp_Y Error: {round(self.kp * curr_err_y, 2)}   Ki_Y Error: {round(self.ki * self.integral_y, 2)}   Kd_Y Error: {round(self.kd * derivative_y, 2)}   Pitch: {round(pitch, 2)}")
 
         # Apply smoothing (low pass filter)
         roll = self.alpha * roll + (1 - self.alpha) * self.prev_x
