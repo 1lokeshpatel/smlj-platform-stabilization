@@ -59,20 +59,53 @@ class Camera:
                 return white_dot_x, white_dot_y
         return None, None
 
-    def locate_ball(self, image, center_pixel_coords):
-        # Convert to HSV color space
-        hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
-        # Generate mask based on the yellowish-orange color range
-        mask = cv.inRange(hsv_image, self.ball_lower_bound, self.ball_upper_bound)
+    def locate_ball(self, image, center_pixel_coords, ball_type='golf'):
+        """
+        Detects a ball in the image based on the ball_type argument.
+        Arguments:
+        - image: The input frame.
+        - center_pixel_coords: Coordinates to draw a line to the center of the ball.
+        - ball_type: 'yellow' for ping pong ball, 'golf' for golf ball detection.
+
+        Returns:
+        - x, y: Adjusted coordinates of the ball center.
+        - area: Area of the detected ball.
+        """
+        # Define the valid detection area (460x460 square at the center of 480x480 frame)
+        margin = 40  # Margin around the detection square
+        valid_start = margin
+        valid_end = 480 - margin
+
+        if ball_type == 'yellow':
+            # Detect yellow ping pong ball using HSV color range
+            hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
+            mask = cv.inRange(hsv_image, self.ball_lower_bound, self.ball_upper_bound)
+        elif ball_type == 'golf':
+            # Detect white golf ball using HSV color range
+            white_lower_bound = np.array([0, 0, 200])  # H: 0-180, S: 0-30, V: 200-255
+            white_upper_bound = np.array([180, 30, 255])
+            hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
+            mask = cv.inRange(hsv_image, white_lower_bound, white_upper_bound)
+        else:
+            raise ValueError("Invalid ball_type. Use 'yellow' or 'golf'.")
+
         # Find contours in the mask
         contours, _ = cv.findContours(mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-        if contours:
-            # Identify the largest contour
-            largest_contour = max(contours, key=cv.contourArea)
+        # Filter contours based on the valid detection area
+        valid_contours = []
+        for contour in contours:
+            (x, y), radius = cv.minEnclosingCircle(contour)
+            if valid_start <= x <= valid_end and valid_start <= y <= valid_end:
+                valid_contours.append(contour)
+
+        if valid_contours:
+            # Identify the largest valid contour
+            largest_contour = max(valid_contours, key=cv.contourArea)
             # Get the minimum enclosing circle for the contour
             (x, y), radius = cv.minEnclosingCircle(largest_contour)
             area = cv.contourArea(largest_contour)  # Calculate contour area
+
             if area > 200:  # Ignore noise based on area threshold
                 # Draw the enclosing circle on the image (red)
                 cv.circle(image, (int(x), int(y)), int(radius), (0, 0, 255), 2)
@@ -87,7 +120,8 @@ class Camera:
                 y -= self.frame_width / 2
                 x, y = -y, x
                 return int(x), int(y), int(area)  # Return adjusted coordinates and area
-        return -1, -1, 0  # Return if no ball is detected
+
+        return -1, -1, 0  # Return if no valid ball is detected
 
     def shutdown_camera(self):
         # Release camera and close windows

@@ -63,7 +63,7 @@ def get_cam_feed():
         # Draw a red dot at the detected white spot
         cv2.circle(frame, (center_pixel_coords[0], center_pixel_coords[1]), 5, (0, 0, 255), -1)
 
-        x, y, area = camera.locate_ball(frame, center_pixel_coords)
+        x, y, area = camera.locate_ball(frame, center_pixel_coords, "golf")
 
         # Optional: print the ball's coordinates and area
         # if area > 0:
