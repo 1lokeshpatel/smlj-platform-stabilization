@@ -18,10 +18,13 @@ y = -1
 area = -1
 center_pixel_coords = [0, 0]
 center = [0, 0]
-waypoints = [(0, 0), (-50, 0), (50, 0), (0, 0), (-50, 0), (0, 0)]  # Line path
+waypoints = [(0, 0), (-30, 0), (30, 0), (0, 0), (-30, 0), (0, 0)]  # Line path
 goal_index = 0  # Start at the first corner
 goal = list(waypoints[goal_index])  # Initialize goal to the first waypoint
 tolerance_factor = 0.8  # Factor to adjust tolerance based on ball's area
+hold_time = 2  # Time in seconds to hold the ball at a waypoint
+holding = False  # Flag to indicate if the robot is holding at a waypoint
+hold_start_time = None  # Timestamp when holding began
 
 # Initialize robot and camera
 robot = Robot.Robot()
@@ -79,16 +82,27 @@ try:
 
             # Check if the ball is within the tolerance of the current goal
             if abs(x - goal[0]) <= tolerance and abs(y - goal[1]) <= tolerance:
-                # Move to the next waypoint
-                goal_index += 1
+                if not holding:
+                    # Start holding at the waypoint
+                    hold_start_time = time.time()
+                    holding = True
+                    print(f"Holding at waypoint: {goal}")
+                elif time.time() - hold_start_time >= hold_time:
+                    # Move to the next waypoint after holding
+                    holding = False
+                    goal_index += 1
 
-                # Stop if the ball reaches the last waypoint
-                if goal_index >= len(waypoints):
-                    print("Ball has reached the last waypoint. Stopping.")
-                    break
+                    # Stop if the ball reaches the last waypoint
+                    if goal_index >= len(waypoints):
+                        print("Ball has reached the last waypoint. Stopping.")
+                        break
 
-                # Update the goal to the next waypoint
-                goal = list(waypoints[goal_index])
+                    # Update the goal to the next waypoint
+                    goal = list(waypoints[goal_index])
+                    print(f"Moving to next waypoint: {goal}")
+            else:
+                # Reset holding if the ball moves outside the tolerance
+                holding = False
 
             # Calculate the next posture adjustment
             theta, phi = pid.calc(goal, Current_value)
