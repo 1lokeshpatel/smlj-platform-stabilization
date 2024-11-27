@@ -21,7 +21,7 @@ center = [0, 0]
 waypoints = [(0, 0), (-30, 0), (30, 0), (0, 0), (-30, 0), (0, 0)]  # Line path
 goal_index = 0  # Start at the first corner
 goal = list(waypoints[goal_index])  # Initialize goal to the first waypoint
-tolerance_factor = 0.8  # Factor to adjust tolerance based on ball's area
+tolerance_factor = 1  # Factor to adjust tolerance based on ball's area
 hold_time = 2  # Time in seconds to hold the ball at a waypoint
 holding = False  # Flag to indicate if the robot is holding at a waypoint
 hold_start_time = None  # Timestamp when holding began
@@ -103,6 +103,7 @@ try:
             else:
                 # Reset holding if the ball moves outside the tolerance
                 holding = False
+                hold_start_time = None
 
             # Calculate the next posture adjustment
             theta, phi = pid.calc(goal, Current_value)
