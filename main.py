@@ -1,6 +1,7 @@
 import motor_control
 import Robot
 import cv
+import cv2
 import pid_control
 import time
 import threading
@@ -22,7 +23,9 @@ a = 1
 x = -1
 y = -1
 area = -1
-goal = [0, 0]  # Goal position in image coordinates
+center_pixel_coords = [0, 0]
+center = [0, 0]
+goal = [0, 0]  # Goal position
 
 robot = Robot.Robot()
 camera = cv.Camera()
@@ -36,13 +39,31 @@ area = None
 
 def get_cam_feed():
     global frame, x, y, area
+    iterations = 0
     while True:
         # Capture and process each frame
         frame = camera.capture_image()
         if frame is None:
             break  # Stop if frame capture fails
 
-        x, y, area = camera.locate_ball(frame, goal)
+        if iterations < 30:
+            center_pixel_coords[0], center_pixel_coords[1] = camera.detect_white_dot(frame)
+
+        if iterations == 30:
+            center[0] = center_pixel_coords[0] - camera.frame_height / 2
+            center[1] = center_pixel_coords[1] - camera.frame_width / 2
+            center[0], center[1] = -center[1], center[0]
+            center[0] = int(center[0])
+            center[1] = int(center[1])
+            goal[0] += center[0]
+            goal[1] += center[1]
+            print(goal)
+            print(center)
+
+        # Draw a red dot at the detected white spot
+        cv2.circle(frame, (center_pixel_coords[0], center_pixel_coords[1]), 5, (0, 0, 255), -1)
+
+        x, y, area = camera.locate_ball(frame, center_pixel_coords)
 
         # Optional: print the ball's coordinates and area
         # if area > 0:
@@ -51,6 +72,8 @@ def get_cam_feed():
 
         # Display the updated frame
         camera.display_video(frame)
+
+        iterations += 1
 
         time.sleep(0)
 

@@ -7,7 +7,7 @@ class PID:
         self.ki = PID[1]
         self.kd = PID[2]
         self.k = k
-        self.i_decay = 0.99
+        self.i_decay = 0.995
         self.alpha = alpha
         self.prev_x = 0
         self.prev_y = 0

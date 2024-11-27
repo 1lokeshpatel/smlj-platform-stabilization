@@ -32,7 +32,34 @@ class Camera:
         cv.imshow("Live Feed", image)
         cv.waitKey(1)
 
-    def locate_ball(self, image, goal):
+    def detect_white_dot(self, image):
+        # Convert to grayscale for detecting white dots
+        gray_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        _, white_mask = cv.threshold(gray_image, 200, 255, cv.THRESH_BINARY)
+        white_contours, _ = cv.findContours(white_mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+        if white_contours:
+            # Find the contour closest to the image center
+            center_x, center_y = self.frame_width // 2, self.frame_height // 2
+
+            # Combine proximity to the center and contour size
+            def scoring_function(contour):
+                dist_to_center = cv.pointPolygonTest(contour, (center_x, center_y), True)
+                size_penalty = -cv.contourArea(contour)
+                return dist_to_center + 0.1 * size_penalty
+
+            # Select the best contour based on the scoring function
+            best_contour = max(white_contours, key=scoring_function)
+
+            # Compute the center of the best contour
+            M = cv.moments(best_contour)
+            if M["m00"] != 0:
+                white_dot_x = int(M["m10"] / M["m00"])
+                white_dot_y = int(M["m01"] / M["m00"])
+                return white_dot_x, white_dot_y
+        return None, None
+
+    def locate_ball(self, image, center_pixel_coords):
         # Convert to HSV color space
         hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
         # Generate mask based on the yellowish-orange color range
@@ -52,12 +79,8 @@ class Camera:
                 # Draw a red circle at the center of the ball
                 cv.circle(image, (int(x), int(y)), 5, (0, 0, 255), -1)
 
-                # Convert goal to image coordinates
-                goal_x = int(goal[0] + self.frame_width / 2)
-                goal_y = int(goal[1] + self.frame_height / 2)
-
                 # Draw a red line from the center of the ball to the goal position
-                cv.line(image, (int(x), int(y)), (goal_x, goal_y), (0, 0, 255), 2)
+                cv.line(image, (int(x), int(y)), (center_pixel_coords[0], center_pixel_coords[1]), (0, 0, 255), 2)
 
                 # Adjust coordinates to center of image
                 x -= self.frame_height / 2
