@@ -72,7 +72,7 @@ class Camera:
         - area: Area of the detected ball.
         """
         # Define the valid detection area (460x460 square at the center of 480x480 frame)
-        margin = 100  # Margin around the detection square
+        margin = 80  # Margin around the detection square
         valid_start = margin
         valid_end = 480 - margin
 
