@@ -80,7 +80,7 @@ class Camera:
                 cv.circle(image, (int(x), int(y)), 5, (0, 0, 255), -1)
 
                 # Draw a red line from the center of the ball to the goal position
-                cv.line(image, (int(x), int(y)), (240, 240), (0, 0, 255), 2)
+                cv.line(image, (int(x), int(y)), (center_pixel_coords[0], center_pixel_coords[1]), (0, 0, 255), 2)
 
                 # Adjust coordinates to center of image
                 x -= self.frame_height / 2
