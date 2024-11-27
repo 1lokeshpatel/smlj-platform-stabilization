@@ -1,3 +1,4 @@
+from cgitb import enable
 import motor_control
 import Robot
 import cv
@@ -8,7 +9,7 @@ import threading
 import numpy as np
 
 # PID parameters
-K_PID = [0.07, 0.011, 0.035]
+K_PID = [0.07, 0.015, 0.035]
 k = 1
 a = 1
 
@@ -21,10 +22,11 @@ center = [0, 0]
 waypoints = [(0, 0), (-40, 0), (-80, 0), (-40, 0), (0, 0), (40, 0), (80, 0), (40, 0), (0, 0)]  # Line path
 goal_index = 0  # Start at the first corner
 goal = list(waypoints[goal_index])  # Initialize goal to the first waypoint
-tolerance_factor = 1  # Factor to adjust tolerance based on ball's area
+tolerance_factor = 1.2  # Factor to adjust tolerance based on ball's area
 hold_time = 2  # Time in seconds to hold the ball at a waypoint
 holding = False  # Flag to indicate if the robot is holding at a waypoint
 hold_start_time = None  # Timestamp when holding began
+enable_d = True
 
 # Initialize robot and camera
 robot = Robot.Robot()
@@ -42,22 +44,8 @@ def get_cam_feed():
         if frame is None:
             break  # Stop if frame capture fails
 
-        if iterations < 30:
-            center_pixel_coords[0], center_pixel_coords[1] = camera.detect_white_dot(frame)
-
-        if iterations == 30:
-            # Calculate the center coordinates and update the goal
-            center[0] = center_pixel_coords[0] - camera.frame_height / 2
-            center[1] = center_pixel_coords[1] - camera.frame_width / 2
-            center[0], center[1] = -center[1], center[0]
-            center[0] = int(center[0])
-            center[1] = int(center[1])
-            # Adjust all waypoints based on the detected center
-            waypoints[:] = [[wp[0] + center[0], wp[1] + center[1]] for wp in waypoints]
-            goal = list(waypoints[goal_index])  # Reset goal to adjusted first waypoint
-
         # Draw a red dot at the detected white spot
-        cv2.circle(frame, (center_pixel_coords[0], center_pixel_coords[1]), 5, (0, 0, 255), -1)
+        cv2.circle(frame, (240, 240), 5, (0, 0, 255), -1)
 
         x, y, area = camera.locate_ball(frame, center_pixel_coords)
 
@@ -87,10 +75,13 @@ try:
                     hold_start_time = time.time()
                     holding = True
                     print(f"Holding at waypoint: {goal}")
+                    enable_d = True
                 elif time.time() - hold_start_time >= hold_time:
+                    print("Moving to next waypoint FLAG")
                     # Move to the next waypoint after holding
                     holding = False
                     goal_index += 1
+                    enable_d = False
 
                     # Stop if the ball reaches the last waypoint
                     if goal_index >= len(waypoints):
@@ -102,13 +93,17 @@ try:
                     print(f"Moving to next waypoint: {goal}")
             else:
                 # Reset holding if the ball moves outside the tolerance
+                print("ball is out of position")
                 holding = False
                 hold_start_time = None
 
             # Calculate the next posture adjustment
             theta, phi = pid.calc(goal, Current_value)
-
-            new_position = [theta, -phi, 0.015]
+            if not enable_d:
+                new_position = [theta*0.4, -phi, 0.015]
+            else:
+                new_position = [theta, -phi, 0.015]
+            
             robot.adjust_posture(new_position, 0.01)
 
 except Exception as e:
