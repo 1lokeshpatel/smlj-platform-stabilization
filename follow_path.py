@@ -42,22 +42,22 @@ def get_cam_feed():
         if frame is None:
             break  # Stop if frame capture fails
 
-        if iterations < 30:
-            center_pixel_coords[0], center_pixel_coords[1] = camera.detect_white_dot(frame)
+        # if iterations < 30:
+        #     center_pixel_coords[0], center_pixel_coords[1] = camera.detect_white_dot(frame)
 
-        if iterations == 30:
-            # Calculate the center coordinates and update the goal
-            center[0] = center_pixel_coords[0] - camera.frame_height / 2
-            center[1] = center_pixel_coords[1] - camera.frame_width / 2
-            center[0], center[1] = -center[1], center[0]
-            center[0] = int(center[0])
-            center[1] = int(center[1])
-            # Adjust all waypoints based on the detected center
-            waypoints[:] = [[wp[0] + center[0], wp[1] + center[1]] for wp in waypoints]
-            goal = list(waypoints[goal_index])  # Reset goal to adjusted first waypoint
+        # if iterations == 30:
+        #     # Calculate the center coordinates and update the goal
+        #     center[0] = center_pixel_coords[0] - camera.frame_height / 2
+        #     center[1] = center_pixel_coords[1] - camera.frame_width / 2
+        #     center[0], center[1] = -center[1], center[0]
+        #     center[0] = int(center[0])
+        #     center[1] = int(center[1])
+        #     # Adjust all waypoints based on the detected center
+        #     waypoints[:] = [[wp[0] + center[0], wp[1] + center[1]] for wp in waypoints]
+        #     goal = list(waypoints[goal_index])  # Reset goal to adjusted first waypoint
 
         # Draw a red dot at the detected white spot
-        cv2.circle(frame, (center_pixel_coords[0], center_pixel_coords[1]), 5, (0, 0, 255), -1)
+        cv2.circle(frame, (240, 240), 5, (0, 0, 255), -1)
 
         x, y, area = camera.locate_ball(frame, center_pixel_coords)
 
