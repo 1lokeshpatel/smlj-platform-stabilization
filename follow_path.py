@@ -9,7 +9,7 @@ import threading
 import numpy as np
 
 # PID parameters
-K_PID = [0.07, 0.015, 0.035]
+K_PID = [0.08, 0.03, 0.035]
 k = 1
 a = 1
 
@@ -19,11 +19,11 @@ y = -1
 area = -1
 center_pixel_coords = [0, 0]
 center = [0, 0]
-waypoints = [(0, 0), (-40, 0), (-80, 0), (-40, 0), (0, 0), (40, 0), (80, 0), (40, 0), (0, 0)]  # Line path
+waypoints = [(0, 0), (-40, 0), (-10, 0), (-40, 0), (0, 0), (40, 0), (100, 0), (40, 0), (0, 0)]  # Line path
 goal_index = 0  # Start at the first corner
 goal = list(waypoints[goal_index])  # Initialize goal to the first waypoint
 tolerance_factor = 1.2  # Factor to adjust tolerance based on ball's area
-hold_time = 2  # Time in seconds to hold the ball at a waypoint
+hold_time = 1.5  # Time in seconds to hold the ball at a waypoint
 holding = False  # Flag to indicate if the robot is holding at a waypoint
 hold_start_time = None  # Timestamp when holding began
 enable_d = True
@@ -75,7 +75,7 @@ try:
                     hold_start_time = time.time()
                     holding = True
                     print(f"Holding at waypoint: {goal}")
-                    enable_d = True
+                    
                 elif time.time() - hold_start_time >= hold_time:
                     print("Moving to next waypoint FLAG")
                     # Move to the next waypoint after holding
@@ -96,12 +96,11 @@ try:
                 print("ball is out of position")
                 holding = False
                 hold_start_time = None
+                enable_d = True
 
             # Calculate the next posture adjustment
             theta, phi = pid.calc(goal, Current_value)
-            if not enable_d:
-                new_position = [theta*0.4, -phi, 0.015]
-            else:
+            if enable_d:
                 new_position = [theta, -phi, 0.015]
             
             robot.adjust_posture(new_position, 0.01)
