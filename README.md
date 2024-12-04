@@ -3,6 +3,8 @@ computer vision, PID, inverse kinematics, and motor control algorithms for ball-
 
 Demo Video: https://drive.google.com/file/d/1bEcpc18iUh_qv3TIuTXQKYr5RhOf5zYI/view?usp=sharing 
 
+White Paper: https://drive.google.com/file/d/1QPjdU6OsM0ilMWdMi8-7c2YDcWti0Yg5/view?usp=sharing
+
 ![image](https://github.com/user-attachments/assets/4b0865a4-d64a-4005-99f6-8da51de39754)
 
 ## Final CAD
