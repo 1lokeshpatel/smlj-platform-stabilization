@@ -1,5 +1,6 @@
 # smlj-platform-stabilization
 computer vision, PID, inverse kinematics, and motor control algorithms for ball-balancing stewart platform
+
 Demo Video: https://drive.google.com/file/d/1bEcpc18iUh_qv3TIuTXQKYr5RhOf5zYI/view?usp=sharing 
 
 ![image](https://github.com/user-attachments/assets/4b0865a4-d64a-4005-99f6-8da51de39754)
