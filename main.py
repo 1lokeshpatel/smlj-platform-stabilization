@@ -1,3 +1,9 @@
+# SMLJ Platform Stabilization
+# Copyright Fall 2024
+# Authors: Lokesh Patel, Dew Bhaumik, Ethan Hsu, Caleb Wong, Edwin Giang
+# University of Waterloo
+# Released under MIT License
+
 import motor_control
 import Robot
 import cv
